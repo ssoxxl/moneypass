@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>문의 및 피드백 (Contact Us) | 머니패스 (MoneyPass)</title>
+  
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      word-break: keep-all;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-18 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20">₩</div>
+        <span class="text-xl font-extrabold text-slate-900 tracking-tight">머니패스</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-1.5 text-sm font-semibold text-slate-600">
+        <a href="index.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">홈</a>
+        <a href="calculator.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">금융·환급 계산기</a>
+        <a href="guides.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">지원금 가이드북</a>
+        <a href="about.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">소개</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-12 w-full">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm">
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 mb-2">✉️ 문의 및 콘텐츠 피드백</h1>
+      <p class="text-xs sm:text-sm text-slate-500 mb-8">오류 제보, 정책 개정 사항 또는 비즈니스 제휴 문의를 남겨주세요.</p>
+
+      <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-4">
+        <div>
+          <label for="contact-name" class="block text-xs font-bold text-slate-700 mb-1.5">성함 또는 닉네임 *</label>
+          <input type="text" id="contact-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="홍길동">
+        </div>
+
+        <div>
+          <label for="contact-email" class="block text-xs font-bold text-slate-700 mb-1.5">답변 받으실 이메일 주소 *</label>
+          <input type="email" id="contact-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@example.com">
+        </div>
+
+        <div>
+          <label for="contact-subject" class="block text-xs font-bold text-slate-700 mb-1.5">문의 분류</label>
+          <select id="contact-subject" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="policy-edit">정책 내용 및 수식 수정 제보</option>
+            <option value="calc-bug">계산기 오류 제보</option>
+            <option value="partnership">비즈니스 제휴 및 광고</option>
+            <option value="other">기타 건의사항</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="contact-message" class="block text-xs font-bold text-slate-700 mb-1.5">상세 내용 *</label>
+          <textarea id="contact-message" rows="5" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="문의 내용을 상세히 적어주세요."></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-md transition">
+          문의 발송하기 🚀
+        </button>
+      </form>
+
+      <div id="contact-success" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-2">
+        <div class="text-3xl">🎉</div>
+        <h3 class="text-base font-black text-emerald-800">문의가 성공적으로 접수되었습니다.</h3>
+        <p class="text-xs text-emerald-600">남겨주신 이메일로 신속히 답변드리겠습니다. 감사합니다.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-xs py-8 text-center">
+    <p>© 2026 MoneyPass. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      document.getElementById("contact-form").classList.add("hidden");
+      document.getElementById("contact-success").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>

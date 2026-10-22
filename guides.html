@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 정부지원금·환급금 심층 가이드북 | 머니패스 (MoneyPass)</title>
+  <meta name="description" content="청년도약계좌, 프리랜서 3.3% 환급, 자진퇴사 실업급여 인정요건, 건강보험 본인부담상한제 환급 매뉴얼">
+  
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      word-break: keep-all;
+    }
+    .ad-placeholder {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      border: 1.5px dashed #cbd5e1;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-18 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          ₩
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-xl font-extrabold text-slate-900 tracking-tight">머니패스</span>
+          <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">2026 최신판</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-1.5 text-sm font-semibold text-slate-600">
+        <a href="index.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">홈</a>
+        <a href="index.html#diagnostic-section" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">30초 맞춤진단</a>
+        <a href="calculator.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">금융·환급 계산기</a>
+        <a href="guides.html" class="px-3.5 py-2 rounded-lg text-blue-600 bg-blue-50 font-bold transition">지원금 가이드북</a>
+        <a href="about.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">소개</a>
+        <a href="index.html#diagnostic-section" class="ml-2 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-600/20 transition-all hover:-translate-y-0.5">
+          내 환급금 찾기 →
+        </a>
+      </nav>
+
+      <button id="mobile-toggle-btn" class="md:hidden p-2 text-slate-700 hover:bg-slate-100 rounded-lg focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white px-4 py-3 space-y-2">
+      <a href="index.html" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-50">홈</a>
+      <a href="calculator.html" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-50">금융·환급 계산기</a>
+      <a href="guides.html" class="block px-3 py-2 rounded-lg bg-blue-50 text-blue-600 font-bold">지원금 가이드북</a>
+      <a href="about.html" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-50">소개</a>
+    </div>
+  </header>
+
+  <div class="max-w-5xl mx-auto px-4 mt-6 w-full">
+    <div class="ad-placeholder w-full h-24 rounded-xl flex flex-col items-center justify-center text-xs text-slate-400 font-medium">
+      <span class="text-[10px] tracking-wider uppercase bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded mb-1">스폰서 광고</span>
+      [구글 애드센스 상단 반응형 배너]
+    </div>
+  </div>
+
+  <main class="max-w-6xl mx-auto px-4 py-10 w-full">
+    <div class="text-center max-w-xl mx-auto mb-8">
+      <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
+        📚 머니패스 심층 가이드 아카이브
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600">
+        신청 기한을 놓치면 평생 소멸되는 숨은 보조금! 법령 해석부터 국세청·복지로 실제 화면 기준의 실전 매뉴얼을 확인하세요.
+      </p>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-10">
+      <button onclick="filterGuides('all')" class="guide-filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-blue-600 text-white shadow-sm transition">전체 가이드</button>
+      <button onclick="filterGuides('finance')" class="guide-filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">금융/목돈</button>
+      <button onclick="filterGuides('tax')" class="guide-filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">세금/환급</button>
+      <button onclick="filterGuides('job')" class="guide-filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">고용/실업</button>
+      <button onclick="filterGuides('housing')" class="guide-filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">주거/월세</button>
+      <button onclick="filterGuides('refund')" class="guide-filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">의료비 환급</button>
+    </div>
+
+    <!-- Guides Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="guides-grid-target"></div>
+
+    <div class="ad-placeholder w-full h-24 rounded-xl flex flex-col items-center justify-center text-xs text-slate-400 font-medium mt-12">
+      <span class="text-[10px] tracking-wider uppercase bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded mb-1">스폰서 광고</span>
+      [구글 애드센스 본문 하단 멀티플렉스 광고]
+    </div>
+  </main>
+
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-xs py-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+      <p>© 2026 MoneyPass. All rights reserved. | <a href="privacy.html" class="hover:text-white">개인정보처리방침</a> | <a href="disclaimer.html" class="hover:text-white">면책조항</a></p>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    function filterGuides(cat) {
+      document.querySelectorAll('.guide-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+      });
+      event.target.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+      event.target.classList.add('bg-blue-600', 'text-white');
+
+      const target = document.getElementById("guides-grid-target");
+      if (cat === 'all') {
+        renderGuideCards(MONEYPASS_DATA.guides, target);
+      } else {
+        const filtered = MONEYPASS_DATA.guides.filter(g => g.category === cat);
+        renderGuideCards(filtered, target);
+      }
+    }
+  </script>
+</body>
+</html>

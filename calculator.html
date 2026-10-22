@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 초고효율 금융·환급 모의계산기 풀 패키지 (7종) | 머니패스 (MoneyPass)</title>
+  <meta name="description" content="실업급여, 3.3% 프리랜서 환급, 청년도약계좌, 병원비 환급, 퇴직소득세, 국민연금 예상액, 연말정산 절세 계산기까지 한곳에서 무료 이용하세요.">
+  
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- 순수 CSS 독립형 스타일시트 (IDE 내장 미리보기 웹뷰 완벽 대응) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      word-break: keep-all;
+    }
+    .ad-placeholder {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      border: 1.5px dashed #cbd5e1;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-18 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          ₩
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-xl font-extrabold text-slate-900 tracking-tight">머니패스</span>
+          <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">2026 최신판</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-1.5 text-sm font-semibold text-slate-600">
+        <a href="index.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">홈</a>
+        <a href="index.html#diagnostic-section" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">30초 맞춤진단</a>
+        <a href="calculator.html" class="px-3.5 py-2 rounded-lg text-blue-600 bg-blue-50 font-bold transition">금융·환급 계산기</a>
+        <a href="guides.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">지원금 가이드북</a>
+        <a href="about.html" class="px-3.5 py-2 rounded-lg hover:text-blue-600 hover:bg-slate-50 transition">소개</a>
+        <a href="index.html#diagnostic-section" class="ml-2 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-600/20 transition-all hover:-translate-y-0.5">
+          내 환급금 찾기 →
+        </a>
+      </nav>
+
+      <button id="mobile-toggle-btn" class="md:hidden p-2 text-slate-700 hover:bg-slate-100 rounded-lg focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white px-4 py-3 space-y-2">
+      <a href="index.html" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-50">홈</a>
+      <a href="index.html#diagnostic-section" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-50">30초 맞춤진단</a>
+      <a href="calculator.html" class="block px-3 py-2 rounded-lg bg-blue-50 text-blue-600 font-bold">금융·환급 계산기 (7종)</a>
+      <a href="guides.html" class="block px-3 py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-50">지원금 가이드북</a>
+    </div>
+  </header>
+
+  <!-- Top Ad Slot -->
+  <div class="max-w-5xl mx-auto px-4 mt-6 w-full">
+    <div class="ad-placeholder w-full h-24 rounded-xl flex flex-col items-center justify-center text-xs text-slate-400 font-medium">
+      <span class="text-[10px] tracking-wider uppercase bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded mb-1">스폰서 광고</span>
+      [구글 애드센스 상단 반응형 배너 / 970x90 or 728x90]
+    </div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 py-10 w-full">
+    <!-- Title Area -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold mb-3 border border-emerald-200">
+        ✨ 2026 최신 법령 산식 7종 풀 패키지 탑재
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">
+        📊 2026 통합 금융 & 환급 모의계산기
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
+        원하는 계산기를 클릭하면 3초 만에 2026년 최신 공식 산식으로 예상 수령액과 절세액을 산출합니다.
+      </p>
+    </div>
+
+    <!-- Tab Navigation Pills (7 items) -->
+    <div class="flex overflow-x-auto gap-2 p-1.5 bg-slate-200/80 rounded-2xl mb-8 max-w-full pb-2">
+      <button class="calc-tab-btn whitespace-nowrap py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all bg-white text-blue-600 shadow-sm" data-tab="unemployment" onclick="switchCalcTab('unemployment')">
+        💼 실업급여
+      </button>
+      <button class="calc-tab-btn whitespace-nowrap py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-600 hover:text-slate-900" data-tab="freelancer" onclick="switchCalcTab('freelancer')">
+        📑 3.3% 환급
+      </button>
+      <button class="calc-tab-btn whitespace-nowrap py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-600 hover:text-slate-900" data-tab="youthleap" onclick="switchCalcTab('youthleap')">
+        💰 청년도약계좌
+      </button>
+      <button class="calc-tab-btn whitespace-nowrap py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-600 hover:text-slate-900" data-tab="health" onclick="switchCalcTab('health')">
+        🏥 병원비 환급
+      </button>
+      <button class="calc-tab-btn whitespace-nowrap py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-600 hover:text-slate-900" data-tab="severance" onclick="switchCalcTab('severance')">
+        💵 퇴직금·퇴직세
+      </button>
+      <button class="calc-tab-btn whitespace-nowrap py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-600 hover:text-slate-900" data-tab="pension" onclick="switchCalcTab('pension')">
+        📈 국민연금 수령액
+      </button>
+      <button class="calc-tab-btn whitespace-nowrap py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all text-slate-600 hover:text-slate-900" data-tab="yearend" onclick="switchCalcTab('yearend')">
+        💳 연말정산 절세
+      </button>
+    </div>
+
+    <!-- 1. Unemployment Calc -->
+    <section class="calc-panel bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40" id="unemployment">
+      <div class="border-b border-slate-100 pb-5 mb-6">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">💼 2026 실업급여(구직급여) 모의계산기</h2>
+        <p class="text-xs sm:text-sm text-slate-500">2026년 기준 1일 상한액 66,000원 및 최저임금 연동 하한액 자동 적용</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+        <div>
+          <label for="ue-age" class="block text-xs font-bold text-slate-700 mb-1.5">퇴사 시 만 나이</label>
+          <select id="ue-age" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="under50" selected>만 50세 미만</option>
+            <option value="over50">만 50세 이상 또는 장애인</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="ue-period" class="block text-xs font-bold text-slate-700 mb-1.5">고용보험 총 가입기간</label>
+          <select id="ue-period" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="1">1년 미만 (180일 이상 충족)</option>
+            <option value="2" selected>1년 이상 ~ 3년 미만</option>
+            <option value="3">3년 이상 ~ 5년 미만</option>
+            <option value="4">5년 이상 ~ 10년 미만</option>
+            <option value="5">10년 이상</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="ue-salary" class="block text-xs font-bold text-slate-700 mb-1.5">퇴사 전 3개월 평균 월급 (원 / 세전)</label>
+          <input type="number" id="ue-salary" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="3000000">
+        </div>
+
+        <div>
+          <label for="ue-hours" class="block text-xs font-bold text-slate-700 mb-1.5">1일 소정 근로시간</label>
+          <select id="ue-hours" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="8" selected>8시간 (주 40시간 통상 근로)</option>
+            <option value="7">7시간</option>
+            <option value="6">6시간</option>
+            <option value="5">5시간</option>
+            <option value="4">4시간 (단시간 근로)</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" onclick="calculateUnemployment()" class="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-base shadow-lg shadow-blue-500/25 transition">
+        실업급여 계산하기 &rarr;
+      </button>
+
+      <div id="ue-result-box" class="hidden mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 sm:p-8">
+        <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">모의 시뮬레이션 결과</span>
+        <div class="text-xs text-slate-500 mt-2">총 예상 실업급여 수령액</div>
+        <div id="ue-total-amount" class="text-3xl sm:text-4xl font-black text-blue-700 my-2">0 원</div>
+
+        <div class="mt-6 pt-5 border-t border-blue-200/60 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-3.5 rounded-xl border border-blue-100">
+            <span class="text-slate-500 block mb-1">1일 구직급여액</span>
+            <strong id="ue-daily-amount" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-blue-100">
+            <span class="text-slate-500 block mb-1">총 수급 인정일수</span>
+            <strong id="ue-days-count" class="text-slate-900 text-base font-black">0 일</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-blue-100">
+            <span class="text-slate-500 block mb-1">월 환산액 (30일 기준)</span>
+            <strong id="ue-monthly-amount" class="text-blue-600 text-base font-black">0 원</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Freelancer Calc -->
+    <section class="calc-panel hidden bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40" id="freelancer">
+      <div class="border-b border-slate-100 pb-5 mb-6">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">📑 프리랜서·N잡러 3.3% 환급 계산기</h2>
+        <p class="text-xs sm:text-sm text-slate-500">배달, 알바, 개발, 디자인 프리랜서의 단순경비율 적용 예상 환급금 산출</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+        <div>
+          <label for="fl-income" class="block text-xs font-bold text-slate-700 mb-1.5">연간 3.3% 총 수입 (원)</label>
+          <input type="number" id="fl-income" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="20000000">
+        </div>
+
+        <div>
+          <label for="fl-rate" class="block text-xs font-bold text-slate-700 mb-1.5">업종 (단순경비율)</label>
+          <select id="fl-rate" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="0.79" selected>배달·대리운전·퀵서비스 (79.0%)</option>
+            <option value="0.64">전문직·개발·디자인 프리랜서 (64.1%)</option>
+            <option value="0.61">작가·번역·학원강사 (61.7%)</option>
+            <option value="0.75">기타 자영업 및 노무 용역 (75.0%)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="fl-family" class="block text-xs font-bold text-slate-700 mb-1.5">부양가족 수 (본인 포함)</label>
+          <select id="fl-family" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="1" selected>1인 (본인만 - 150만원 공제)</option>
+            <option value="2">2인 (배우자/부모 1인 - 300만원)</option>
+            <option value="3">3인 이상 (450만원 이상)</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" onclick="calculateFreelancerTax()" class="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base shadow-lg shadow-emerald-500/25 transition">
+        예상 환급액 계산하기 &rarr;
+      </button>
+
+      <div id="fl-result-box" class="hidden mt-8 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-6 sm:p-8">
+        <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">5월 종합소득세 예상 환급금</span>
+        <div id="fl-refund-amount" class="text-3xl sm:text-4xl font-black text-emerald-700 my-2">0 원</div>
+
+        <div class="mt-6 pt-5 border-t border-emerald-200/60 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-3.5 rounded-xl border border-emerald-100">
+            <span class="text-slate-500 block mb-1">기납부 세금 (3.3%)</span>
+            <strong id="fl-prepaid-tax" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-emerald-100">
+            <span class="text-slate-500 block mb-1">인정 필요경비</span>
+            <strong id="fl-expense-deduct" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-emerald-100">
+            <span class="text-slate-500 block mb-1">결정세액 (실제 낼 세금)</span>
+            <strong id="fl-final-tax" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Youth Leap Calc -->
+    <section class="calc-panel hidden bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40" id="youthleap">
+      <div class="border-b border-slate-100 pb-5 mb-6">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">💰 청년도약계좌 만기 비교 계산기</h2>
+        <p class="text-xs sm:text-sm text-slate-500">5년 만기 시 정부기여금 매칭과 15.4% 비과세 혜택을 일반 과세 적금과 정밀 비교</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+        <div>
+          <label for="yl-deposit" class="block text-xs font-bold text-slate-700 mb-1.5">월 납입 희망액 (원)</label>
+          <select id="yl-deposit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="700000" selected>월 70만 원 (최대 한도)</option>
+            <option value="600000">월 60만 원</option>
+            <option value="500000">월 50만 원</option>
+            <option value="400000">월 40만 원</option>
+            <option value="300000">월 30만 원</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="yl-income" class="block text-xs font-bold text-slate-700 mb-1.5">개인 연소득 구간</label>
+          <select id="yl-income" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="tier1" selected>총급여 2,400만 이하 (월 최대 3.3만원 매칭)</option>
+            <option value="tier2">2,400만 ~ 3,600만 원 (월 2.9만원)</option>
+            <option value="tier3">3,600만 ~ 4,800만 원 (월 2.5만원)</option>
+            <option value="tier4">4,800만 ~ 6,000만 원 (월 2.2만원)</option>
+            <option value="tier5">6,000만 ~ 7,500만 원 (비과세만)</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" onclick="calculateYouthLeap()" class="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-base shadow-lg shadow-indigo-500/25 transition">
+        만기 수령액 및 일반적금 비교하기 &rarr;
+      </button>
+
+      <div id="yl-result-box" class="hidden mt-8 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-2xl p-6 sm:p-8">
+        <span class="text-xs font-bold text-indigo-800 bg-indigo-100 px-2.5 py-1 rounded-full">5년 만기 총 수령액</span>
+        <div id="yl-total-amount" class="text-3xl sm:text-4xl font-black text-indigo-700 my-2">0 원</div>
+
+        <div class="mt-6 pt-5 border-t border-indigo-200/60 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100">
+            <span class="text-slate-500 block mb-1">정부기여금 순수 지원액</span>
+            <strong id="yl-gov-match" class="text-blue-600 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100">
+            <span class="text-slate-500 block mb-1">은행 이자 (15.4% 비과세)</span>
+            <strong id="yl-interest" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-amber-200 bg-amber-50/50">
+            <span class="text-amber-800 block mb-1 font-bold">일반 적금 대비 추가 이득</span>
+            <strong id="yl-extra-gain" class="text-amber-700 text-base font-black">0 원</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Health Insurance Calc -->
+    <section class="calc-panel hidden bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40" id="health">
+      <div class="border-b border-slate-100 pb-5 mb-6">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">🏥 건강보험 본인부담상한제 환급금 계산기</h2>
+        <p class="text-xs sm:text-sm text-slate-500">1년간 지출한 급여 병원비 중 소득 수준별 초과 환급액 산출</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+        <div>
+          <label for="hi-expense" class="block text-xs font-bold text-slate-700 mb-1.5">1년간 지출한 급여 병원비 (원)</label>
+          <input type="number" id="hi-expense" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="3500000">
+        </div>
+
+        <div>
+          <label for="hi-tier" class="block text-xs font-bold text-slate-700 mb-1.5">건강보험 소득 분위</label>
+          <select id="hi-tier" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="1">1분위 (하위 10% - 상한액 87만원)</option>
+            <option value="2">2~3분위 (상한액 108만원)</option>
+            <option value="4" selected>4~5분위 (상한액 162만원 - 중산층 평균)</option>
+            <option value="6">6~7분위 (상한액 303만원)</option>
+            <option value="8">8분위 (상한액 414만원)</option>
+            <option value="9">9분위 (상한액 538만원)</option>
+            <option value="10">10분위 (상위 10% - 상한액 800만원)</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" onclick="calculateHealthRefund()" class="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-base shadow-lg shadow-rose-500/25 transition">
+        환급금 시뮬레이션 &rarr;
+      </button>
+
+      <div id="hi-result-box" class="hidden mt-8 bg-gradient-to-br from-rose-50 to-orange-50 border border-rose-200 rounded-2xl p-6 sm:p-8">
+        <span class="text-xs font-bold text-rose-800 bg-rose-100 px-2.5 py-1 rounded-full">예상 환급금</span>
+        <div id="hi-refund-amount" class="text-3xl sm:text-4xl font-black text-rose-700 my-2">0 원</div>
+
+        <div class="mt-6 pt-5 border-t border-rose-200/60 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-3.5 rounded-xl border border-rose-100">
+            <span class="text-slate-500 block mb-1">소득 상한액 기준선</span>
+            <strong id="hi-my-ceiling" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-rose-100">
+            <span class="text-slate-500 block mb-1">지출한 병원비</span>
+            <strong id="hi-my-expense" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Severance Pay Calc (New) -->
+    <section class="calc-panel hidden bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40" id="severance">
+      <div class="border-b border-slate-100 pb-5 mb-6">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">💵 퇴직금 & 퇴직소득세 모의계산기</h2>
+        <p class="text-xs sm:text-sm text-slate-500">2026년 대폭 상향된 근속연수공제를 반영한 실수령 퇴직금 계산</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+        <div>
+          <label for="sev-start-year" class="block text-xs font-bold text-slate-700 mb-1.5">입사 연도</label>
+          <input type="number" id="sev-start-year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="2020">
+        </div>
+
+        <div>
+          <label for="sev-end-year" class="block text-xs font-bold text-slate-700 mb-1.5">퇴사(예정) 연도</label>
+          <input type="number" id="sev-end-year" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="2026">
+        </div>
+
+        <div>
+          <label for="sev-salary" class="block text-xs font-bold text-slate-700 mb-1.5">퇴직 전 3개월 평균 월급 (원 / 세전)</label>
+          <input type="number" id="sev-salary" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="3800000">
+        </div>
+
+        <div>
+          <label for="sev-bonus" class="block text-xs font-bold text-slate-700 mb-1.5">연간 정기 상여금 총액 (원 / 없으면 0)</label>
+          <input type="number" id="sev-bonus" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="2000000">
+        </div>
+      </div>
+
+      <button type="button" onclick="calculateSeverance()" class="w-full py-4 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-black text-base shadow-lg shadow-teal-500/25 transition">
+        퇴직금 및 세금 계산하기 &rarr;
+      </button>
+
+      <div id="sev-result-box" class="hidden mt-8 bg-gradient-to-br from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl p-6 sm:p-8">
+        <span class="text-xs font-bold text-teal-800 bg-teal-100 px-2.5 py-1 rounded-full">세후 예상 실수령 퇴직금</span>
+        <div id="sev-net-amount" class="text-3xl sm:text-4xl font-black text-teal-700 my-2">0 원</div>
+
+        <div class="mt-6 pt-5 border-t border-teal-200/60 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-3.5 rounded-xl border border-teal-100">
+            <span class="text-slate-500 block mb-1">세전 퇴직금 총액</span>
+            <strong id="sev-total-amount" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-teal-100">
+            <span class="text-slate-500 block mb-1">퇴직소득세 (지방세 포함)</span>
+            <strong id="sev-tax-amount" class="text-rose-600 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-teal-100">
+            <span class="text-slate-500 block mb-1">인정 근속연수</span>
+            <strong id="sev-years-count" class="text-slate-900 text-base font-black">0 년</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. National Pension Calc (New) -->
+    <section class="calc-panel hidden bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40" id="pension">
+      <div class="border-b border-slate-100 pb-5 mb-6">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">📈 국민연금 예상 수령액 및 조기·연기 비교기</h2>
+        <p class="text-xs sm:text-sm text-slate-500">평생 수령 총액과 조기수령(-30%) vs 연기수령(+36%)의 득실 분석</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+        <div>
+          <label for="np-income" class="block text-xs font-bold text-slate-700 mb-1.5">가입 기간 평균 월 소득 (원)</label>
+          <input type="number" id="np-income" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="3200000">
+        </div>
+
+        <div>
+          <label for="np-years" class="block text-xs font-bold text-slate-700 mb-1.5">예상 총 납부 기간 (년)</label>
+          <select id="np-years" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="10">10년 (최소 가입 요건)</option>
+            <option value="15">15년</option>
+            <option value="20" selected>20년 (평균)</option>
+            <option value="25">25년</option>
+            <option value="30">30년 이상</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="np-option" class="block text-xs font-bold text-slate-700 mb-1.5">수령 시점 선택</label>
+          <select id="np-option" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="normal" selected>만 65세 정상 수령 (100%)</option>
+            <option value="early5">만 60세 (5년 조기, 30% 감액)</option>
+            <option value="early3">만 62세 (3년 조기, 18% 감액)</option>
+            <option value="delay5">만 70세 (5년 연기, 36% 증액)</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" onclick="calculateNationalPension()" class="w-full py-4 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-black text-base shadow-lg shadow-amber-500/25 transition">
+        국민연금 수령액 시뮬레이션 &rarr;
+      </button>
+
+      <div id="np-result-box" class="hidden mt-8 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 sm:p-8">
+        <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full" id="np-applied-option">정상 수령</span>
+        <div id="np-monthly-amount" class="text-3xl sm:text-4xl font-black text-amber-700 my-2">0 원 / 월</div>
+
+        <div class="mt-6 pt-5 border-t border-amber-200/60 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-3.5 rounded-xl border border-amber-100">
+            <span class="text-slate-500 block mb-1">연간 환산 수령액</span>
+            <strong id="np-annual-amount" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-amber-100">
+            <span class="text-slate-500 block mb-1">평생 누적 예상액 (25년 수령 기준)</span>
+            <strong id="np-lifetime-amount" class="text-blue-600 text-base font-black">0 원</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Year-End Tax Saver (New) -->
+    <section class="calc-panel hidden bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40" id="yearend">
+      <div class="border-b border-slate-100 pb-5 mb-6">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-1">💳 연말정산 신용 vs 체크 vs 연금저축 절세 계산기</h2>
+        <p class="text-xs sm:text-sm text-slate-500">13월의 월급을 극대화하는 카드 황금 비율과 연금저축 세액공제 한도 산출</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+        <div>
+          <label for="ye-salary" class="block text-xs font-bold text-slate-700 mb-1.5">연간 총급여 (원 / 세전)</label>
+          <input type="number" id="ye-salary" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="45000000">
+        </div>
+
+        <div>
+          <label for="ye-credit" class="block text-xs font-bold text-slate-700 mb-1.5">연간 신용카드 사용액 (원)</label>
+          <input type="number" id="ye-credit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="15000000">
+        </div>
+
+        <div>
+          <label for="ye-debit" class="block text-xs font-bold text-slate-700 mb-1.5">연간 체크카드 / 현금영수증 사용액 (원)</label>
+          <input type="number" id="ye-debit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="8000000">
+        </div>
+
+        <div>
+          <label for="ye-pension" class="block text-xs font-bold text-slate-700 mb-1.5">연금저축 / IRP 연간 납입액 (원 / 최대 900만)</label>
+          <input type="number" id="ye-pension" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value="6000000">
+        </div>
+      </div>
+
+      <button type="button" onclick="calculateYearEndTax()" class="w-full py-4 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-black text-base shadow-lg shadow-violet-500/25 transition">
+        절세 환급액 계산하기 &rarr;
+      </button>
+
+      <div id="ye-result-box" class="hidden mt-8 bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-2xl p-6 sm:p-8">
+        <span class="text-xs font-bold text-violet-800 bg-violet-100 px-2.5 py-1 rounded-full">예상 세금 환급액 (13월의 월급)</span>
+        <div id="ye-total-saved" class="text-3xl sm:text-4xl font-black text-violet-700 my-2">0 원 환급</div>
+
+        <div class="mt-6 pt-5 border-t border-violet-200/60 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div class="bg-white p-3.5 rounded-xl border border-violet-100">
+            <span class="text-slate-500 block mb-1">연금저축 세액공제액</span>
+            <strong id="ye-pension-saved" class="text-violet-700 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-violet-100">
+            <span class="text-slate-500 block mb-1">카드 소득공제 환급효과</span>
+            <strong id="ye-card-saved" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-violet-100">
+            <span class="text-slate-500 block mb-1">인정 카드 소득공제액</span>
+            <strong id="ye-card-deduct" class="text-slate-900 text-base font-black">0 원</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Ad Slot -->
+    <div class="ad-placeholder w-full h-24 rounded-xl flex flex-col items-center justify-center text-xs text-slate-400 font-medium mt-10">
+      <span class="text-[10px] tracking-wider uppercase bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded mb-1">스폰서 광고</span>
+      [구글 애드센스 일치하는 콘텐츠 반응형 배너]
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-xs py-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+      <p>© 2026 MoneyPass. All rights reserved. | <a href="privacy.html" class="hover:text-white">개인정보처리방침</a> | <a href="disclaimer.html" class="hover:text-white">면책조항</a></p>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/calculators.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    function switchCalcTab(tabId) {
+      document.querySelectorAll(".calc-tab-btn").forEach(btn => {
+        btn.classList.remove("bg-white", "text-blue-600", "shadow-sm");
+        btn.classList.add("text-slate-600");
+      });
+      document.querySelectorAll(".calc-panel").forEach(panel => panel.classList.add("hidden"));
+
+      const targetBtn = document.querySelector(`[data-tab="${tabId}"]`);
+      const targetPanel = document.getElementById(tabId);
+
+      if (targetBtn) {
+        targetBtn.classList.remove("text-slate-600");
+        targetBtn.classList.add("bg-white", "text-blue-600", "shadow-sm");
+      }
+      if (targetPanel) {
+        targetPanel.classList.remove("hidden");
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab");
+      if (tab) switchCalcTab(tab);
+      
+      const mobileBtn = document.getElementById('mobile-toggle-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
