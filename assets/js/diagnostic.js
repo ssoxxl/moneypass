@@ -29,6 +29,9 @@
     el.append(text('p',policy.reason),details,text('p',`자료 확인 ${policy.verified}${policy.end ? ' · 공고상 접수 종료 '+policy.end : ''}`,'fine'));
     const a = document.createElement('a'); a.href = policy.officialUrl; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.className = 'button secondary'; a.textContent = '공식 안내 확인하기 ↗';
     el.append(a);
+    if (policy.guideId) {
+      const guide=document.createElement('a');guide.href='guides/'+encodeURIComponent(policy.guideId)+'.html';guide.className='text-link policy-guide';guide.textContent='대상 조건·신청 준비 자세히 보기 →';el.append(guide);
+    }
     const related = {'earned-income-tax-credit':['eitc/','장려금 예상액 계산하기'],'youth-rent-2026':['rent-tax-credit/','월세 세액공제 알아보기'],'unemployment-benefit-calc':['average-wage/','평균임금 먼저 계산하기']}[policy.id];
     if (related) {
       const link=document.createElement('a');link.href='https://calc.ssoxxl.com/'+related[0];link.target='_blank';link.rel='noopener noreferrer';link.className='text-link policy-calculator';link.textContent=related[1]+' · 계산왕 ↗';el.append(link);
@@ -40,13 +43,19 @@
     const error = form.querySelector('.form-error'), output = document.getElementById('diagnostic-results');
     error.hidden = true;
     try {
-      const matches = matchPolicies(MONEYPASS_DATA.policies, {
+      const criteria = {
         age:document.getElementById('diag-age').value,job:document.getElementById('diag-job').value,house:document.getElementById('diag-house').value,interest:document.getElementById('diag-interest').value,includeClosed:document.getElementById('diag-closed').checked
-      });
+      };
+      const matches = matchPolicies(MONEYPASS_DATA.policies, criteria);
       output.replaceChildren(text('h3',`살펴볼 만한 혜택 ${matches.length}개를 찾았어요`),text('p','신청 대상인지는 소득·재산 등 세부 조건에 따라 달라져요. 각 안내에서 신청 조건과 접수기간을 확인해 주세요.'));
       const grid = document.createElement('div'); grid.className = 'grid two';
       matches.forEach(p => grid.appendChild(card(p)));
-      if (!matches.length) output.appendChild(text('p','이 조건으로 소개해 드릴 혜택이 아직 없어요. 관심 분야를 ‘전체’로 바꿔보거나 정부24·복지로에서 다른 혜택도 찾아보세요.','empty-state'));
+      if (!matches.length) {
+        const closed=criteria.includeClosed ? [] : matchPolicies(MONEYPASS_DATA.policies,{...criteria,includeClosed:true}).filter(p=>p.status==='closed');
+        const empty=text('div',closed.length ? `현재 추천에 포함하지 않은 마감·기존 가입자 안내가 ${closed.length}개 있어요. 접수 중인 다른 사업은 공식 사이트에서 확인해 주세요.` : '이 조건으로 소개해 드릴 혜택이 아직 없어요. 관심 분야를 ‘전체’로 바꿔보거나 정부24·복지로에서 다른 혜택도 찾아보세요.','empty-state');
+        if (closed.length) { const button=text('button','마감된 안내도 함께 보기','button secondary');button.type='button';button.addEventListener('click',()=>{document.getElementById('diag-closed').checked=true;form.requestSubmit();});empty.append(button); }
+        output.append(empty);
+      }
       output.appendChild(grid); output.hidden = false; output.focus();
     } catch (err) { output.hidden = true; error.textContent = err.message; error.hidden = false; document.getElementById('diag-age').focus(); }
   });

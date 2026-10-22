@@ -13,6 +13,13 @@ _copy_spec = importlib.util.spec_from_file_location('moneypass_copy', ROOT/'tool
 _copy_module = importlib.util.module_from_spec(_copy_spec)
 _copy_spec.loader.exec_module(_copy_module)
 natural_copy = _copy_module.natural_copy
+def load_content(name):
+    spec = importlib.util.spec_from_file_location('moneypass_'+name, ROOT/'tools'/f'{name}.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+CALC_CONTENT = load_content('calculator_content').CALCULATOR_HELP
+GUIDE_CONTENT = load_content('guide_content')
 BASE = CONFIG['siteUrl'].rstrip('/')
 if BASE and (urlparse(BASE).scheme != 'https' or not urlparse(BASE).netloc or urlparse(BASE).query or urlparse(BASE).fragment):
     raise ValueError('siteUrl must be an absolute HTTPS directory URL without query/fragment')
@@ -30,13 +37,53 @@ SOURCES = {
     'employment': ('고용24 · 국민취업지원제도', 'https://www.work24.go.kr/ua/z/z/1300/selectEmssRqutIntro.do?intro=1'),
     'earned': ('국세청 홈택스', 'https://www.hometax.go.kr/'),
     'telecom': ('스마트초이스 · 통신요금 정보포털', 'https://www.smartchoice.or.kr/'),
+    'earnedguide': ('국세청 · 근로장려금 안내', 'https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?cntntsId=7784&mi=2450'),
+    'earnednotice': ('국세청 · 2025년 귀속 근로·자녀장려금 정기 신청 안내', 'https://www.nts.go.kr/nts/na/ntt/selectNttInfo.do?mi=&nttSn=1350768'),
+    'taxfiling': ('국세청 · 종합소득세 신고·납부', 'https://nts.go.kr/nts/cm/cntnts/cntntsView.do?cntntsId=7664&mi=2224'),
+    'future': ('서민금융진흥원 · 청년미래적금', 'https://www.kinfa.or.kr/financialProduct/youthFutureSavings.do'),
 }
+SOURCES['telecom'] = ('스마트초이스 · 통신 미환급액 안내', 'https://www.smartchoice.or.kr/smc/service/refund02.do?type=m')
 
 def e(s): return html.escape(str(s), quote=True)
 def write(path, text):
     p = ROOT / path
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(natural_copy(text) if p.suffix == '.html' else text, encoding='utf-8', newline='\n')
+    p.write_text(text, encoding='utf-8', newline='\n')
+
+def info_table(title, rows):
+    if not rows: return ''
+    return f'<div class="table-scroll" tabindex="0" role="region" aria-label="{e(title)}"><table><caption>{e(title)}</caption><thead><tr><th scope="col">항목</th><th scope="col">설명</th></tr></thead><tbody>'+''.join(f'<tr><th scope="row">{e(label)}</th><td>{e(text)}</td></tr>' for label,text in rows)+'</tbody></table></div>'
+
+def faq_html(items):
+    return '<div class="faq-list">'+''.join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in items)+'</div>'
+
+def homepage_explanation():
+    return '''<section class="section"><div class="section-heading"><div><span class="eyebrow">혜택을 읽는 방법</span><h2>지원금·환급금·세액공제는 어떻게 다를까요?</h2></div></div><div class="grid three"><article class="card"><h3>지원금은 신청 조건을 먼저 봐요</h3><p>청년월세나 구직촉진수당은 나이·가구소득·재산·활동 요건 등을 심사해요. 최대액은 모든 사람이 받는 정액이 아니고, 신청기간과 지급 회차도 확인해야 해요.</p></article><article class="card"><h3>환급금은 실제 내역이 있어야 해요</h3><p>미리 낸 세금이나 요금이 정산한 금액보다 많을 때 차액을 돌려받는 경우예요. 통신 미환급액이나 세금 환급은 본인의 실제 내역이 없으면 받을 돈도 없을 수 있어요.</p></article><article class="card"><h3>공제 가능액은 환급액과 달라요</h3><p>소득공제는 세금을 매길 소득을 줄이고 세액공제는 계산된 세금에서 빼요. 실제로 돌려받는 돈은 이미 낸 세금과 최종 결정세액까지 함께 봐야 알 수 있어요.</p></article></div></section>'''
+
+def privacy_content():
+    return f'''<h1>개인정보처리방침</h1><p class="fine">최종 수정 {VERIFIED}</p>
+<h2>1. 계산기와 혜택 찾기 입력값</h2><p>나이·직업·급여·지출 등 화면에 입력한 값은 이용자의 브라우저 메모리에서 계산합니다. 머니패스는 이 입력값을 자체 서버로 전송하거나 쿠키·로컬스토리지에 저장하지 않습니다. 화면을 새로고침하면 입력·결과가 초기화될 수 있습니다.</p>
+<h2>2. 이메일 문의에서 처리하는 정보</h2><p>문의 이메일 주소와 이용자가 직접 작성한 제목·본문·첨부파일을 문의 답변 및 오류 확인 목적으로 처리합니다. 문의 양식은 메일 앱에서 초안을 여는 기능이며, 이용자가 메일 앱에서 발송을 완료하기 전에는 문의가 접수되지 않습니다. 주민등록번호·계좌 비밀번호·신분증·세금 신고서 등 불필요한 민감정보를 보내지 마세요.</p><p>문의 정보는 답변·후속 확인에 필요한 동안 보관하고, 처리 목적이 달성되면 지체 없이 삭제합니다. 법령에 따른 보존 의무가 있는 정보는 해당 법령의 기간과 목적에 한해 보관합니다. 삭제·정정 등 요청은 아래 운영 문의처로 접수할 수 있습니다.</p>
+<h2>3. 호스팅과 외부 서비스</h2><p>호스팅 사업자는 사이트 제공·보안 운영을 위해 IP 주소·접속 시각·요청 주소 등 접속 기록을 처리할 수 있습니다. 공식 기관이나 계산왕 링크를 열면 해당 사이트의 개인정보처리방침이 적용됩니다. 머니패스는 링크 URL에 계산기 입력값을 추가해 전달하지 않습니다.</p>
+<h2>4. Google AdSense 자동광고</h2><p>머니패스는 사이트 운영을 위해 Google AdSense 자동광고를 사용합니다. Google을 포함한 제3자 광고 공급업체는 쿠키 등을 사용하여 이전 방문 이력을 바탕으로 광고를 제공할 수 있습니다. 실제 광고 게재와 개인정보 처리는 광고 차단·동의 여부·지역과 Google의 서비스 설정에 따라 달라질 수 있습니다.</p><p><a href="https://myadcenter.google.com/" target="_blank" rel="noopener noreferrer">Google 내 광고 센터</a>에서 맞춤 광고 설정을 관리할 수 있고, <a href="https://policies.google.com/technologies/partner-sites?hl=ko" target="_blank" rel="noopener noreferrer">Google이 파트너 사이트의 정보를 사용하는 방식</a>에서 관련 처리를 확인할 수 있습니다. 계산기 자체가 광고업체에 급여 등 입력값을 전송하도록 구현되어 있지는 않습니다.</p>
+<h2>5. 이용자의 요청과 문의</h2><p>개인정보 처리 담당은 머니패스 운영자입니다. 문의로 제공한 개인정보의 열람·정정·삭제·처리정지를 요청하려면 운영 이메일로 연락해 주세요. 본인 확인과 관련 법령의 제한에 따라 처리 범위가 달라질 수 있습니다. 이 사이트에 저장하지 않는 계산기 입력값은 운영자가 조회하거나 복원할 수 없습니다.</p>'''
+
+def calculator_explanation(key):
+    data = CALC_CONTENT[key]
+    return f'<section id="explanation-{key}" class="calculator-explanation"><h3>{e(data["title"])}</h3><p>{e(data["intro"])}</p>'+info_table('입력 항목을 확인해 보세요',data['inputs'])+info_table(data['example_title'],data['example'])+f'<p class="example-note">{e(data["interpret"])}</p><h4>자주 묻는 질문</h4>'+faq_html(data['faq'])+f'<div class="next-step"><h4>계산 다음에는 이렇게 확인하세요</h4><p>{e(data["next"])}</p></div></section>'
+
+def render_guide_body(guide):
+    details = GUIDE_CONTENT.GUIDE_DETAILS[guide['id']]
+    sections = guide['sections'] + details['extra']
+    body = f'<div class="breadcrumbs"><a href="../guides.html">가이드</a><span aria-hidden="true">/</span><span>{e(guide["category"])}</span></div><article class="article card"><header><span class="eyebrow">{e(guide["category"])}</span><h1>{e(guide["title"])}</h1><p class="lede">{e(guide["summary"])}</p><p class="fine">머니패스 편집 · 공식 자료 확인 {VERIFIED}</p></header><p class="reader-note">{e(details["reader"])}</p><nav class="toc" aria-label="목차"><strong>이 글에서 확인할 내용</strong><ol>'
+    body += ''.join(f'<li><a href="#part-{i}">{e(title)}</a></li>' for i,(title,_) in enumerate(sections,1))
+    body += '<li><a href="#prepare">신청 전 체크리스트</a></li><li><a href="#questions">자주 묻는 질문</a></li></ol></nav>'
+    body += ''.join(f'<section id="part-{i}"><h2>{e(title)}</h2><p>{e(text)}</p></section>' for i,(title,text) in enumerate(sections,1))
+    if details['example']:
+        body += '<section class="worked-example"><h2>예시로 이해하기</h2>'+info_table(details['example_title'],details['example'])+f'<p class="example-note">{e(details["example_note"])}</p></section>'
+    body += '<section id="prepare" class="next-step"><h2>신청 전 체크리스트</h2><ul>'+''.join(f'<li>{e(item)}</li>' for item in details['checklist'])+'</ul></section><section id="questions"><h2>자주 묻는 질문</h2>'+faq_html(details['faq'])+'</section>'
+    body += '<section class="sources"><h2>참고한 공식 자료</h2><ul>'+''.join('<li>'+source(key)+'</li>' for key in guide['sources'])+'</ul><p class="fine">제도는 변경될 수 있어요. 신청 직전 담당 기관의 최신 공고를 확인해 주세요.</p></section><div class="article-actions"><a class="button" href="../calculator.html">계산기로 확인하기 →</a><button type="button" class="button secondary" data-share>링크 복사</button></div></article>'
+    return body
 def source(key):
     label, url = SOURCES[key]
     return f'<a href="{e(url)}" target="_blank" rel="noopener noreferrer">{e(label)} ↗</a>'
@@ -73,6 +120,7 @@ def related_tool(key):
     path,label = mapping[key]
     return f'<p class="related-tool"><a href="{CALC_HUB}{path}" target="_blank" rel="noopener noreferrer">{label} ↗</a><span class="fine">새 탭에서 열려요. 입력값은 전달하지 않아요.</span></p>'
 def page(path, title, description, content, active='', scripts=(), article=False):
+    content = natural_copy(content)
     prefix = '../' if path.startswith('guides/') else ''
     nav = [('index.html','혜택 찾기','home'),('calculator.html','계산기','calculator'),('guides.html','가이드','guides')]
     links = ''.join(f'<a href="{prefix}{url}"'+(' aria-current="page"' if key==active else '')+f'>{label}</a>' for url,label,key in nav)
@@ -108,16 +156,31 @@ POLICIES = [
     dict(id='freelancer-tax-refund',title='3.3% 사업소득 세금 정산',category='tax',label='프리랜서',age=[0,120],jobs=['freelancer','business','employee'],houses=[],amount='기납부세액과 결정세액 차이 · 추가 납부 가능',status='check',summary='3.3%는 미리 납부한 세금입니다. 종합소득세 정산 결과에 따라 환급되거나 추가 납부할 수 있습니다.',source='earned',requirements=['사업소득 원천징수 내역 확인','업종·수입·직전년도 매출에 따른 경비율 적용 가능 여부 확인','근로소득 등 다른 종합소득과 공제·감면 합산'],steps=['홈택스에서 신고 대상·모두채움 안내 확인','다른 소득·필요경비·공제와 기납부세액 검토','종합소득세 및 지방소득세 신고·정산 확인'],reason='다른 소득과 업종별 필요경비를 확인해야 실제 정산액을 알 수 있습니다.'),
     dict(id='telecom-utility-refund',title='통신 미환급액 조회',category='refund',label='생활',age=[0,120],jobs=[],houses=[],amount='실제 미환급 내역이 있는 경우에만 지급',status='check',summary='통신서비스 해지·번호이동 정산 후 남은 미환급액이 있는지 공식 포털에서 확인할 수 있습니다.',source='telecom',requirements=['과거 통신서비스 이용·해지 내역 확인','참여 통신사와 조회 가능 시간 확인','조회 결과가 없는 경우 지급금 없음'],steps=['스마트초이스 통신 미환급액 조회 메뉴 접속','본인정보를 공식 사이트에 직접 입력','미환급액이 있을 경우 공식 절차로 신청'],reason='본인인증 후 실제 미환급 내역을 확인해야 합니다.'),
 ]
+POLICIES.append(dict(id='youth-future-savings',title='청년미래적금',category='finance',label='저축',age=[19,40],jobs=[],houses=[],amount='3년 만기 · 월 최대 50만원 · 유형별 기여금',status='check',summary='신규 정책저축상품을 찾는 청년을 위한 안내예요. 모집 일정과 개인·가구소득, 일반형·우대형 요건을 공식 사이트에서 확인해 보세요.',source='future',requirements=['일반 연령 19~34세, 35세 이상은 병역이행기간 차감 등 인정 여부 확인','개인·가구소득 및 금융소득종합과세 등 가입 제한 확인','일반형 6%·우대형 12% 기여금의 유형별 가입·유지 요건 확인'],steps=['서민금융진흥원 최신 상품·모집 안내 확인','취급기관 앱에서 해당 모집기간에 가입 신청','소득·가구 등 가입요건 심사 후 계좌개설 안내 확인'],reason='연령만으로 자격이 정해지지 않아요. 35세 이상은 병역기간 인정과 실제 모집일정을 먼저 확인해 주세요.'))
+POLICY_GUIDES = {
+    'youth-rent-2026':'guide-youth-rent','youth-leap-account':'guide-youth-leap-vs-savings',
+    'national-employment-support':'guide-employment-support','earned-income-tax-credit':'guide-earned-income-credit',
+    'health-insurance-refund':'guide-health-refund','unemployment-benefit-calc':'guide-unemployment-benefit',
+    'freelancer-tax-refund':'guide-freelancer-tax-return','telecom-utility-refund':'guide-telecom-refund',
+    'youth-future-savings':'guide-youth-future-savings',
+}
 for p in POLICIES:
+    if p['id'] in ['earned-income-tax-credit','freelancer-tax-refund']:
+        p['jobs'] = []
+        p['reason'] = '지금은 학생이거나 일을 쉬고 있어도 해당 귀속연도의 소득이 있다면 확인해 보세요. 다른 소득과 가구·공제 요건에 따라 결과가 달라져요.'
+    if p['id'] == 'national-employment-support':
+        p['jobs'] = []
+        p['reason'] = '재학·근로 상태만으로 확정하지 않아요. 유형별 소득·재산·취업상태 요건과 다른 지원 참여 여부를 확인해 주세요.'
+    p['guideId'] = POLICY_GUIDES[p['id']]
     p['officialUrl'] = SOURCES[p['source']][1]
     p['verified'] = VERIFIED
 
 GUIDES = [
  dict(id='guide-youth-leap-vs-savings',title='청년도약계좌: 기존 가입자의 기여금·만기 확인법',category='저축',summary='신규 가입 종료 여부부터 소득구간별 기여금, 만기 시뮬레이션의 가정까지 확인합니다.',sources=['youth'],sections=[
  ('먼저 신규 가입 종료 여부를 확인하세요','청년도약계좌 신규 가입은 2025년 12월 31일까지 운영됐습니다. 2026년에 새로 신청할 수 있는 적금으로 안내해서는 안 됩니다. 기존 가입자는 가입 은행에서 유지 조건과 계좌 상태를 확인하세요.'),
- ('기여금은 납입금액에 비례합니다','2025년 1월 이후 납입분의 월 최대 기여금은 총급여 구간별로 33,000원·29,000원·25,200원·21,000원이며, 6,000만원 초과 구간은 기여금이 없습니다. 예를 들어 총급여 2,400만원 이하 구간에서 40만원을 납입하면 6%인 24,000원입니다. 70만원 납입 시 추가 30만원에 3%가 더해져 33,000원이 됩니다.'),
+ ('기여금은 납입액과 소득구간에 따라 달라져요','2025년 1월 이후 납입분의 월 최대 기여금은 총급여 구간별로 33,000원·29,000원·25,200원·21,000원이며, 6,000만원 초과 구간은 기여금이 없습니다. 예를 들어 총급여 2,400만원 이하 구간에서 40만원을 납입하면 6%인 24,000원입니다. 70만원 납입 시 추가 30만원에 3%가 더해져 33,000원이 됩니다.'),
  ('만기액과 순수 지원액을 구분하세요','본인이 납입한 원금은 정부지원금이 아닙니다. 원금·정부기여금·은행이자를 분리해서 비교해야 합니다. 소득 유지심사, 금리 변경, 우대금리 충족 여부와 부분인출은 결과에 영향을 줍니다.'),
- ('계산기 사용 순서','현재 소득구간과 월 납입액, 은행 적용금리 및 비교 적금 금리를 입력하세요. 이 사이트 계산은 2025년 이후 동일한 납입조건을 가정한 시나리오입니다. 과거 납입분이나 기존 계좌 전체 잔액을 복원하지 않으며 기여금에 붙는 별도 은행이자는 제외합니다. 실제 만기액은 은행에서 확인하세요.')]),
+ ('계산기 사용 순서','소득구간과 월 납입액, 비교할 연 금리를 입력하세요. 2025년 이후 기여금 구조를 적용해 같은 월 납입액·금리로 60개월을 처음부터 납입한다고 놓은 비교예요. 과거 납입분이나 기존 계좌 잔액을 복원하지 않고 기여금에 붙는 별도 은행이자도 제외해요. 실제 계좌 지급액은 은행에서 확인하세요.')]),
  dict(id='guide-freelancer-tax-return',title='3.3% 세금 정산: 환급과 추가 납부가 갈리는 이유',category='세금',summary='원천징수는 확정 세금이 아닙니다. 필요경비·인적공제·다른 소득을 함께 확인해야 합니다.',sources=['tax','earned'],sections=[
  ('3.3%는 선납 세금입니다','인적용역 사업소득 지급 시 소득세 3%와 지방소득세 0.3%를 미리 공제하는 경우가 있습니다. 납부한 세금 전부가 자동으로 환급되는 것은 아닙니다. 종합소득세 신고에서 계산한 결정세액보다 많이 냈다면 차액을 돌려받고, 적게 냈다면 더 납부합니다.'),
  ('경비율을 임의로 고르면 안 됩니다','업종코드·해당연도 수입·직전년도 매출 등에 따라 단순경비율 또는 기준경비율 적용 여부가 달라집니다. 실제 장부를 작성하는 경우에도 정당한 증빙이 필요합니다. 계산기에는 본인이 공식 자료로 확인한 경비율만 입력하세요.'),
@@ -145,32 +208,46 @@ GUIDES = [
  ('연말정산 절세효과는 환급액이 아닙니다','카드 소득공제는 총급여 25% 초과 사용분에 적용하고 일반 신용카드 15%, 체크카드·현금영수증 30%를 사용합니다. 연금저축은 600만원, IRP 등과 합산해 900만원까지 세액공제 대상입니다. 이 도구는 일반사용분과 기본 한도만 다루며 자녀·전통시장·대중교통 등 추가 한도는 제외합니다. 실제 환급액은 결정세액과 기납부세액, 다른 공제와 함께 정산해야 합니다.')]),
 ]
 
-def guide_cards(prefix=''):
-    return ''.join(f'<article class="card guide-card"><span class="eyebrow">{g["category"]}</span><h3><a href="{prefix}guides/{g["id"]}.html">{g["title"]}</a></h3><p>{g["summary"]}</p><a class="text-link" href="{prefix}guides/{g["id"]}.html">가이드 읽기 <span aria-hidden="true">↗</span></a></article>' for g in GUIDES)
+GUIDES.extend(GUIDE_CONTENT.ADDITIONAL_GUIDES)
+next(g for g in GUIDES if g['id']=='guide-freelancer-tax-return')['sources'].append('taxfiling')
+
+def guide_cards(prefix='',limit=None):
+    return ''.join(f'<article class="card guide-card"><span class="eyebrow">{g["category"]}</span><h3><a href="{prefix}guides/{g["id"]}.html">{g["title"]}</a></h3><p>{g["summary"]}</p><a class="text-link" href="{prefix}guides/{g["id"]}.html">가이드 읽기 <span aria-hidden="true">↗</span></a></article>' for g in GUIDES[:limit])
 
 def field(id,label,value='',type='number',hint='',min='0',max='1000000000000',step='1',required=True):
+    if id in {'ue-ordinary','sev-bonus','sev-leave','sev-ordinary','hi-paid','fl-deduction'}:
+        required = False
+    if id == 'yl-months':
+        min = max = '60'
+        label = '표준 만기기간 (개월)'
+        hint = '60개월 비교만 제공해요. 기존 계좌의 남은 기간·중도해지는 계산하지 않아요.'
     attrs = f' min="{min}" max="{max}" step="{step}"' if type=='number' else ''
+    if id == 'yl-months': attrs += ' readonly'
     described = f' aria-describedby="{id}-hint"' if hint else ''
     return f'<div class="field"><label for="{id}">{label}</label><input id="{id}" name="{id}" type="{type}" value="{value}"{attrs}{" required" if required else ""}{described}>'+ (f'<small id="{id}-hint">{hint}</small>' if hint else '')+'</div>'
 
 def select(id,label,options,hint=''):
-    return f'<div class="field"><label for="{id}">{label}</label><select id="{id}" name="{id}">'+''.join(f'<option value="{e(v)}">{e(l)}</option>' for v,l in options)+f'</select>'+ (f'<small>{hint}</small>' if hint else '')+'</div>'
+    described = f' aria-describedby="{id}-hint"' if hint else ''
+    return f'<div class="field"><label for="{id}">{label}</label><select id="{id}" name="{id}"{described}>'+''.join(f'<option value="{e(v)}">{e(l)}</option>' for v,l in options)+f'</select>'+ (f'<small id="{id}-hint">{hint}</small>' if hint else '')+'</div>'
 
 def calc_section(key,title,intro,fields,scope,sources,button='계산하기'):
-    return f'<section class="calc-panel card" id="{key}" aria-labelledby="heading-{key}"><div class="section-top"><div><span class="eyebrow">예상 금액 알아보기</span><h2 id="heading-{key}">{title}</h2><p>{intro}</p></div></div>{note(CALC_SHORT_NOTES[key])}{related_tool(key)}<form data-calculator="{key}" novalidate><div class="fields">{fields}</div><p class="form-error" role="alert" hidden></p><button class="button" type="submit">{button} <span aria-hidden="true">→</span></button><div class="calc-result" tabindex="-1" aria-live="polite" hidden></div></form><details class="method"><summary>공식 출처와 계산 범위</summary><p>{scope}</p><ul>{"".join("<li>"+source(k)+"</li>" for k in sources)}</ul><p class="fine">자료 확인일 {VERIFIED}. 원 단위 미만 버림 등으로 실제 정산액과 차이가 날 수 있습니다.</p></details></section>'
+    return f'<section class="calc-panel card" id="{key}" aria-labelledby="heading-{key}"><div class="section-top"><div><span class="eyebrow">예상 금액 알아보기</span><h2 id="heading-{key}">{title}</h2><p>{intro}</p></div></div>{note(CALC_SHORT_NOTES[key])}{related_tool(key)}<form data-calculator="{key}" novalidate><div class="fields">{fields}</div><p class="form-error" role="alert" hidden></p><button class="button" type="submit">{button} <span aria-hidden="true">→</span></button><div class="calc-result" tabindex="-1" hidden></div></form>{calculator_explanation(key)}<details class="method"><summary>공식 출처와 계산 범위</summary><p>{scope}</p><ul>{"".join("<li>"+source(k)+"</li>" for k in sources)}</ul><p class="fine">자료 확인일 {VERIFIED}. 원 단위 미만 버림 등으로 실제 정산액과 차이가 날 수 있습니다.</p></details></section>'
 
 def build():
     publisher = CONFIG.get('adsense',{}).get('client','')
     if re.fullmatch(r'ca-pub-\d{16}',publisher):
         write('ads.txt', f'google.com, {publisher[3:]}, DIRECT, f08c47fec0942fa0\n')
+    else:
+        (ROOT/'ads.txt').unlink(missing_ok=True)
     write('assets/js/config.js','window.MONEYPASS_CONFIG = '+json.dumps(CONFIG,ensure_ascii=False).replace('<','\\u003c')+';\n')
     data={'verified':VERIFIED,'policies':POLICIES,'guides':[dict(id=g['id'],title=g['title']) for g in GUIDES]}
     write('assets/js/data.js','/* Generated by tools/build.py. */\nconst MONEYPASS_DATA = '+json.dumps(data,ensure_ascii=False,indent=2).replace('<','\\u003c')+';\nif(typeof module !== "undefined") module.exports = MONEYPASS_DATA;\n')
     home=f'''<section class="hero"><div><span class="pill">복잡한 돈 정보, 한 번에 정리</span><h1>나에게 필요한 혜택,<br><em>조건부터 확인하세요.</em></h1><p class="hero-description">지원금과 환급 정보를 찾고, 계산기로 금액의 기준을 확인하세요. 신청은 각 기관의 공식 사이트에서 진행합니다.</p><div class="hero-actions"><a class="button" href="#diagnostic-section">내 조건으로 혜택 찾기 →</a><a class="button secondary" href="calculator.html">계산기 둘러보기</a></div><div class="trust-row"><span>✓ 회원가입 없이</span><span>✓ 입력값 서버 전송 없이</span><span>✓ 공식 출처와 함께</span></div></div><aside class="hero-aside"><span class="eyebrow">MONEY CHECKLIST</span><h2>금액보다 먼저,<br>확인할 세 가지.</h2><ol><li><span>01</span><div><strong>신청할 수 있나요?</strong><p>대상 조건과 접수기간 확인</p></div></li><li><span>02</span><div><strong>어떻게 계산하나요?</strong><p>산식과 입력 기준 확인</p></div></li><li><span>03</span><div><strong>어디서 신청하나요?</strong><p>공식 기관으로 바로 이동</p></div></li></ol><p class="fine">실제 환급금 조회·본인인증을 대행하지 않습니다.</p></aside></section>
     <div class="section-heading"><div><span class="eyebrow">FIND YOUR NEXT STEP</span><h2>내 상황에서 확인할 혜택</h2></div><span class="updated">자료 확인 {VERIFIED}</span></div>
-    <section id="diagnostic-section" class="card diagnostic"><p>선택한 조건으로 관련 제도를 좁혀드립니다. 가구소득·재산·가입이력 등은 각 기관에서 추가 확인해야 합니다.</p><form id="diagnostic-form"><div class="fields">{field('diag-age','만 나이','29',min='0',max='120')}{select('diag-job','현재 상황',[('employee','근로자'),('freelancer','프리랜서·N잡러'),('business','개인사업자'),('jobseeker','구직 중·퇴직 후'),('student','학생'),('other','기타')])}{select('diag-house','주거 형태',[('rent','부모와 별도 거주 · 무주택 월세'),('parents','부모님과 동거'),('other','전세·자가·기타')])}{select('diag-interest','관심 분야',[('all','전체'),('housing','주거'),('finance','저축'),('job','취업·실업'),('tax','세금'),('refund','의료·생활 환급')])}</div><label class="checkbox"><input id="diag-closed" type="checkbox">모집이 끝난 제도·기존 가입자 안내도 보기</label><p class="form-error" role="alert" hidden></p><button class="button" type="submit">관련 제도 확인하기 →</button></form><div id="diagnostic-results" class="diagnostic-results" tabindex="-1" hidden aria-live="polite"></div></section>
-    {ad('home')}<section class="section"><div class="section-heading"><div><span class="eyebrow">CALCULATE WITH CONTEXT</span><h2>계산의 기준까지, 함께.</h2></div><a class="text-link" href="calculator.html">계산기 7종 보기 →</a></div><div class="grid three">{''.join(f'<a class="card tool-card" href="calculator.html?tab={k}"><span class="tool-symbol" aria-hidden="true">{symbol}</span><h3>{title}</h3><p>{desc}</p><span class="text-link">계산하기 ↗</span></a>' for k,symbol,title,desc in [('unemployment','01','실업급여','2026년 상·하한액과 소정급여일수'),('severance','02','퇴직금·퇴직소득세','실제 근무일수와 누진공제 산식'),('yearend','03','카드·연금계좌 공제','소득공제와 세액공제를 구분해서')])}</div></section><section class="section"><div class="section-heading"><div><span class="eyebrow">READ BEFORE YOU APPLY</span><h2>신청 전 읽어볼 가이드</h2></div><a class="text-link" href="guides.html">전체 가이드 →</a></div><div class="grid three">{guide_cards()}</div></section>'''
+    <section id="diagnostic-section" class="card diagnostic"><p>선택한 조건으로 관련 제도를 좁혀드립니다. 가구소득·재산·가입이력 등은 각 기관에서 추가 확인해야 합니다.</p><form id="diagnostic-form"><div class="fields">{field('diag-age','만 나이','29',min='0',max='120')}{select('diag-job','현재 상황',[('employee','근로자'),('freelancer','프리랜서·N잡러'),('business','개인사업자'),('jobseeker','구직 중·퇴직 후'),('student','학생'),('other','기타')])}{select('diag-house','주거 형태',[('rent','부모와 별도 거주 · 무주택 월세'),('parents','부모님과 동거'),('other','전세·자가·기타')])}{select('diag-interest','관심 분야',[('all','전체'),('housing','주거'),('finance','저축'),('job','취업·실업'),('tax','세금'),('refund','의료·생활 환급')])}</div><label class="checkbox"><input id="diag-closed" type="checkbox">모집이 끝난 제도·기존 가입자 안내도 보기</label><p class="form-error" role="alert" hidden></p><button class="button" type="submit">관련 제도 확인하기 →</button></form><div id="diagnostic-results" class="diagnostic-results" tabindex="-1" hidden></div></section>
+    {ad('home')}<section class="section"><div class="section-heading"><div><span class="eyebrow">CALCULATE WITH CONTEXT</span><h2>계산의 기준까지, 함께.</h2></div><a class="text-link" href="calculator.html">계산기 7종 보기 →</a></div><div class="grid three">{''.join(f'<a class="card tool-card" href="calculator.html?tab={k}"><span class="tool-symbol" aria-hidden="true">{symbol}</span><h3>{title}</h3><p>{desc}</p><span class="text-link">계산하기 ↗</span></a>' for k,symbol,title,desc in [('unemployment','01','실업급여','2026년 상·하한액과 소정급여일수'),('severance','02','퇴직금·퇴직소득세','실제 근무일수와 누진공제 산식'),('yearend','03','카드·연금계좌 공제','소득공제와 세액공제를 구분해서')])}</div></section><section class="section"><div class="section-heading"><div><span class="eyebrow">READ BEFORE YOU APPLY</span><h2>신청 전 읽어볼 가이드</h2></div><a class="text-link" href="guides.html">전체 가이드 →</a></div><div class="grid three">{guide_cards(limit=6)}</div></section>'''
     home = home.replace('<section class="section"><div class="section-heading"><div><span class="eyebrow">READ BEFORE YOU APPLY', calculator_hub()+'<section class="section"><div class="section-heading"><div><span class="eyebrow">READ BEFORE YOU APPLY')
+    home += homepage_explanation()
     page('index.html','정부지원금·환급 정보와 금융 계산기','지원금 자격과 접수기간을 확인하고 실업급여·퇴직금·세금 계산의 기준을 알아보세요. 공식 출처를 제공하는 무료 정보 서비스.',home,'home',scripts=['diagnostic.js'])
     calculators=[]
     calculators.append(calc_section('unemployment','실업급여 모의계산','2026년 이직한 일반 근로자 기준',field('ue-average','1일 평균임금 (원)','100000',hint='퇴직 전 3개월 임금총액 ÷ 해당 기간 총일수. 상여·제외기간 등 반영한 값.',min='.01',step='.01')+field('ue-ordinary','1일 통상임금 (원)','0',hint='평균임금보다 높다면 반영합니다. 미입력 시 0.')+select('ue-hours','1일 소정근로시간',[(str(x),f'{x}시간') for x in [8,7,6,5,4,3,2,1]])+select('ue-period','고용보험 가입기간',[(1,'1년 미만'),(2,'1년 이상 ~ 3년 미만'),(3,'3년 이상 ~ 5년 미만'),(4,'5년 이상 ~ 10년 미만'),(5,'10년 이상')])+select('ue-age','이직일 당시 구분',[('under50','50세 미만'),('over50','50세 이상 또는 장애인')]),'기초일액의 60%, 상한 68,100원, 하한 최저시급 10,320원 × 80% × 소정근로시간을 적용합니다. 수급자격은 별도 심사하며 일용직·예술인·노무제공자·자영업자는 이 계산의 대상이 아닙니다. 소정근로시간은 기관이 인정한 정수 시간을 입력하세요.',['unemployment']))
@@ -185,7 +262,7 @@ def build():
     page('calculator.html','금융·세금 계산기 7종','실업급여, 사업소득 정산, 청년도약계좌, 병원비 초과금, 퇴직금·퇴직소득세, 연금 수령 비교와 연말정산 공제 계산.',calcbody+calculator_hub(),'calculator',scripts=['finance.js','calculators.js'])
     page('guides.html','신청 전 읽는 지원금·환급 가이드','공식 출처로 확인하는 지원금과 환급 정보. 조건·신청기간·계산 기준을 확인하세요.','<section class="page-intro"><span class="eyebrow">MONEY GUIDE</span><h1>신청하기 전,<br>차근차근 확인하세요.</h1><p>혜택의 조건과 계산 기준을 이해하는 여섯 가지 가이드.</p></section><div class="grid three section">'+guide_cards()+'</div>','guides')
     for g in GUIDES:
-        body=f'<div class="breadcrumbs"><a href="../guides.html">가이드</a><span aria-hidden="true">/</span><span>{g["category"]}</span></div><article class="article card"><header><span class="eyebrow">{g["category"]}</span><h1>{g["title"]}</h1><p class="lede">{g["summary"]}</p><p class="fine">머니패스 편집 · 공식 자료 확인 {VERIFIED}</p></header><nav class="toc" aria-label="목차"><strong>이 글에서 확인할 내용</strong><ol>'+''.join(f'<li><a href="#part-{i}">{e(t)}</a></li>' for i,(t,_) in enumerate(g['sections'],1))+'</ol></nav>'+''.join(f'<section id="part-{i}"><h2>{e(t)}</h2><p>{e(text)}</p></section>' for i,(t,text) in enumerate(g['sections'],1))+ad('article')+'<section class="sources"><h2>공식 출처</h2><ul>'+''.join('<li>'+source(k)+'</li>' for k in g['sources'])+'</ul><p class="fine">제도는 변경될 수 있습니다. 신청 직전 담당 기관의 최신 공고를 확인하세요.</p></section><div class="article-actions"><a class="button" href="../calculator.html">계산기 확인하기 →</a><button type="button" class="button secondary" data-share>링크 복사</button></div></article>'
+        body = render_guide_body(g)
         page('guides/'+g['id']+'.html',g['title'],g['summary'],body,'guides',article=True)
     page('guide-detail.html','가이드 찾기','머니패스 공식 자료 기반 가이드를 확인하세요.','<section class="page-intro"><h1>가이드 찾기</h1><p>이전 주소로 접속하셨다면 해당 가이드로 이동합니다.</p></section><div class="grid three section">'+guide_cards()+'</div>','guides',scripts=['legacy.js'])
     about='<h1>머니패스 소개와 편집 원칙</h1><p class="lede">공식 정보를 읽기 쉽게 정리하고, 계산의 기준을 설명합니다.</p><h2>제공하는 것</h2><p>조건별 제도 탐색, 산식이 공개된 계산기, 신청 전 확인할 가이드를 제공합니다. 본인인증을 통한 환급금 조회나 지원금 신청 대행은 제공하지 않습니다.</p><h2>자료를 다루는 원칙</h2><ul><li>공식 기관의 자료를 출처로 연결하고 확인일을 표시합니다.</li><li>모집 종료·기존 가입자 안내를 신규 신청과 구분합니다.</li><li>서로 다른 성격의 최대금액을 합산해 개인 수혜액처럼 표시하지 않습니다.</li><li>실제 집계가 없는 진단건수·조회수·평균 환급액을 표시하지 않습니다.</li></ul><h2>업데이트와 정정</h2><p>정책은 수동으로 검토하며 실시간 갱신을 보장하지 않습니다. 오류나 변경 사항은 문의 페이지로 제보할 수 있습니다. 신청 전에 공식 사이트의 최신 공고를 확인하세요.</p><h2>운영 방식</h2><p>회원가입 없이 브라우저에서 계산합니다. 광고가 설정된 경우 광고 수익으로 운영할 수 있으며 광고와 공식 신청 링크는 구분해서 표시합니다.</p><a class="button" href="contact.html">오류·변경 사항 제보 →</a>'
@@ -195,7 +272,7 @@ def build():
         email = e(CONFIG['contactEmail'])
         contact = contact.replace('<div id="contact-status"></div>', f'<p class="contact-email">문의 이메일: <a href="mailto:{email}">{email}</a></p><div id="contact-status"></div>')
     page('contact.html','문의·오류 제보','궁금한 점이나 잘못된 정보가 있다면 이메일로 알려주세요.','<article class="article card legal">'+contact+'</article>')
-    privacy='<h1>개인정보처리방침</h1><p class="fine">최종 수정 '+VERIFIED+'</p><h2>계산·조건 선택 입력값</h2><p>계산기와 혜택 탐색의 입력값은 브라우저 메모리에서 처리합니다. 이 앱은 해당 입력값을 서버로 전송하거나 쿠키·로컬스토리지에 저장하지 않습니다.</p><h2>문의</h2><p>문의 초안은 메일 앱에서 작성·발송합니다. 사이트 자체에 문의 접수 서버는 없습니다. 이메일 발송 후 정보 처리는 운영자의 메일 서비스 정책과 문의 대응에 따릅니다. 주민등록번호·금융인증정보·계좌번호 등 민감정보를 보내지 마세요.</p><h2>호스팅·외부 링크</h2><p>호스팅 사업자는 서비스 제공 및 보안을 위해 IP·접속일시·요청주소 등 접속 기록을 처리할 수 있습니다. 외부 공식 사이트로 이동하면 해당 서비스의 개인정보처리방침이 적용됩니다.</p><h2>광고</h2><p>광고가 활성화된 경우 Google 등 제3자 광고 공급업체가 쿠키를 사용해 과거 방문을 바탕으로 광고를 제공할 수 있습니다. <a href="https://myadcenter.google.com/" target="_blank" rel="noopener noreferrer">Google 내 광고 센터</a>에서 맞춤 광고 설정을 관리할 수 있습니다. 운영 환경에서 별도로 추가한 분석도구·광고·동의 관리 도구는 실제 사용 현황에 맞춰 안내해야 합니다.</p><h2>문의 창구</h2><p>개인정보 관련 요청은 <a href="contact.html">문의 페이지</a>의 실제 운영 연락처를 이용해 주세요.</p>'
+    privacy = privacy_content()
     terms='<h1>이용약관</h1><h2>서비스</h2><p>머니패스는 지원금·세금·연금 관련 정보와 모의계산 도구를 무료로 제공합니다. 정부기관의 공식 신청·심사 서비스가 아닙니다.</p><h2>이용자의 확인</h2><p>입력값과 대상 연도·자격·신청기간을 확인한 뒤 이용해 주세요. 결과는 공식 지급 결정이나 세무 신고서를 대신하지 않습니다. 계산 범위를 벗어나는 상황은 담당 기관 또는 자격 있는 전문가에게 확인해야 합니다.</p><h2>변경·정정</h2><p>제도 변경이나 오류 수정에 따라 내용과 도구를 변경할 수 있습니다. 오류 제보는 문의 페이지를 이용해 주세요.</p><h2>책임과 권리</h2><p>운영자는 정확한 정보를 제공하기 위해 노력합니다. 본 약관은 관련 법령에 따른 이용자의 권리나 운영자의 법적 책임을 배제하지 않습니다.</p>'
     disclaimer='<h1>계산 범위와 면책 안내</h1><p class="lede">계산 결과의 의미와 제외한 조건을 확인하세요.</p><h2>지원금 추천</h2><p>나이·현재 상황·주거·관심 분야로 관련 제도를 찾습니다. 가구소득·재산·혼인·가입이력 등 전체 조건을 심사하지 않으므로 수급자격을 확정하지 않습니다. 개인별 총 수혜액이나 실제 환급금 조회 결과를 제공하지 않습니다.</p><h2>모의계산</h2><p>각 계산기 상단과 출처 영역에 대상 연도·가정·제외 항목을 공개합니다. 실제 지급·신고·원천징수는 기관의 판단, 개인 이력, 산정 기간과 반올림·절사 규칙에 따라 달라질 수 있습니다.</p><h2>의사결정 전 확인</h2><p>급여 청구, 세금 신고, 연금 수령 신청 등은 공식 자료를 확인한 뒤 진행하세요. 부정확한 결과를 발견하면 입력 예시와 함께 문의해 주세요.</p>'
     if CONFIG.get('contactEmail'):

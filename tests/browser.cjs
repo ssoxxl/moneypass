@@ -36,6 +36,8 @@ const server=http.createServer((req,res)=>{
       assert.equal(await page.locator('[data-policy-id="youth-rent-2026"]').count(),0);
       await page.locator('#diag-interest').selectOption('housing');await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('.empty-state').isVisible());
       await page.locator('#diag-age').fill('29');await page.locator('#diag-house').selectOption('rent');await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('[data-policy-id="youth-rent-2026"]').isVisible());
+      await page.locator('#diag-closed').uncheck();await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('.empty-state button').isVisible());await page.locator('.empty-state button').click();assert.ok(await page.locator('[data-policy-id="youth-rent-2026"] .policy-guide').isVisible());
+      await page.locator('#diag-interest').selectOption('tax');await page.locator('#diag-job').selectOption('student');await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('[data-policy-id="earned-income-tax-credit"]').isVisible());
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
       await page.goto(base+'/calculator.html');
       for(const key of ['unemployment','freelancer','youth','health','severance','pension','yearend']){
@@ -44,6 +46,13 @@ const server=http.createServer((req,res)=>{
         if(key==='health')await page.locator('#hi-ceiling').fill('1500000');
         const form=page.locator(`form[data-calculator="${key}"]`);await form.locator('button[type="submit"]').click();
         assert.ok(await form.locator('.calc-result').isVisible(),key+' result');assert.ok(!await form.locator('.form-error').isVisible(),key+' error');
+        const resultText=await form.locator('.calc-result').innerText();
+        if(key==='unemployment')assert.ok(resultText.includes('66,048'));
+        if(key==='freelancer')assert.ok(resultText.includes('374,000'));
+        if(key==='youth'){assert.ok(resultText.includes('48,783,750'));assert.equal(await page.locator('#yl-months').getAttribute('readonly'),'');}
+        if(key==='yearend')assert.ok(resultText.includes('세액한도 적용 전 최대 절세효과'));
+        const optional={unemployment:['ue-ordinary'],freelancer:['fl-deduction'],health:['hi-paid'],severance:['sev-bonus','sev-leave','sev-ordinary']}[key]||[];
+        if(optional.length){for(const id of optional)await page.locator('#'+id).fill('');await form.locator('button[type=submit]').click();assert.ok(await form.locator('.calc-result').isVisible());assert.ok(!await form.locator('.form-error').isVisible());}
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),key+' result overflow');
       }
       await page.locator('#ye-salary').fill('-1');await page.locator('#yearend button[type=submit]').click();assert.ok(await page.locator('#yearend .form-error').isVisible());assert.ok(!await page.locator('#yearend .calc-result').isVisible());

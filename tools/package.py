@@ -15,6 +15,10 @@ if (root/'ads.txt').exists(): files.append(root/'ads.txt')
 if (root/'sitemap.xml').exists(): files.append(root/'sitemap.xml')
 target = out/'moneypass-site.zip'
 site = out/'site'
+if site.resolve() != root/'dist'/'site' or site.is_symlink():
+    raise RuntimeError('Refusing to replace an unexpected publication directory')
+if site.exists():
+    shutil.rmtree(site)  # Only the verified generated publication directory.
 site.mkdir(exist_ok=True)
 with ZipFile(target, 'w', ZIP_DEFLATED) as archive:
     for path in sorted(files):

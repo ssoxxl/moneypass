@@ -2,7 +2,8 @@
 (function () {
   const F = MoneyFinance;
   const won = n => Math.round(n).toLocaleString('ko-KR')+' 원';
-  const value = id => document.getElementById(id).value;
+  const optionalZeros = new Set(['ue-ordinary','sev-bonus','sev-leave','sev-ordinary','hi-paid','fl-deduction']);
+  const value = id => { const text=document.getElementById(id).value; return text==='' && optionalZeros.has(id) ? 0 : text; };
   function render(form,label,amount,rows,note) {
     const output = form.querySelector('.calc-result'); output.replaceChildren();
     const el = (tag,text,cls) => { const node = document.createElement(tag); node.textContent = text; if(cls)node.className=cls; return node; };
@@ -14,15 +15,15 @@
   const actions = {
     unemployment(form) {
       const r=F.unemployment({dailyAverage:value('ue-average'),ordinaryDaily:value('ue-ordinary'),hours:value('ue-hours'),period:value('ue-period'),older:value('ue-age')==='over50'});
-      render(form,'받을 수 있는 총 구직급여 예상액',won(r.total),[['하루 지급액',won(r.daily)],['받을 수 있는 일수',r.days+' 일'],['28일 기준으로 계산하면',won(r.per28)],['입력한 근로시간의 하루 최소액',won(r.floor)]],'수급자격이 인정되고 해당 기간 동안 실업인정을 받는 경우예요. 실제 입금액은 회차별 인정일수에 따라 달라져요.');
+      render(form,'수급자격이 인정될 때의 예상 총 구직급여',won(r.total),[['하루 지급액',won(r.daily)],['받을 수 있는 일수',r.days+' 일'],['28일 기준으로 계산하면',won(r.per28)],['입력한 근로시간의 하루 최소액',won(r.floor)]],'수급자격이 인정되고 해당 기간 동안 실업인정을 받는 경우예요. 실제 입금액은 회차별 인정일수에 따라 달라져요.');
     },
     freelancer(form) {
       const r=F.freelancer({income:value('fl-income'),expenseRate:Number(value('fl-rate'))/100,people:value('fl-family'),otherDeduction:value('fl-deduction'),credit:value('fl-credit')});
-      render(form,r.balance>=0?'돌려받을 수 있는 예상 세금':'추가로 낼 수 있는 예상 세금',won(Math.abs(r.balance)),[['미리 낸 세금 (3.3%)',won(r.prepaid)],['반영한 필요경비',won(r.expense)],['과세표준',won(r.base)],['계산된 세금 (지방세 포함)',won(r.tax)]],'사업수입 전액에서 3.3%를 뗐고 다른 소득은 없다고 보고 계산했어요. 실제 신고할 때는 다른 소득과 공제도 함께 확인해 주세요.');
+      render(form,r.balance>=0?'다른 소득이 없을 때 예상 환급 차액':'다른 소득이 없을 때 예상 추가 납부 차액',won(Math.abs(r.balance)),[['미리 낸 세금 (3.3%)',won(r.prepaid)],['반영한 필요경비',won(r.expense)],['과세표준',won(r.base)],['계산된 세금 (지방세 포함)',won(r.tax)]],'사업수입 전액에서 3.3%를 뗐고 다른 소득은 없다고 보고 계산했어요. 실제 신고할 때는 다른 소득과 공제도 함께 확인해 주세요.');
     },
     youth(form) {
       const r=F.youth({deposit:value('yl-deposit'),tier:value('yl-income'),rate:Number(value('yl-rate'))/100,normalRate:Number(value('yl-normal'))/100,months:value('yl-months')});
-      render(form,'이 조건으로 모았을 때의 예상 금액',won(r.total),[['내가 납입한 원금',won(r.principal)],['정부기여금',won(r.contribution)],['납입원금에 붙는 이자',won(r.interest)],['일반적금과 비교한 차이',(r.extra>=0?'+':'−')+won(Math.abs(r.extra))]],'매달 납입액과 금리·기여금이 같다고 보고 계산했어요. 기여금에 붙는 은행이자는 제외했으니, 실제 계좌의 만기금액은 가입 은행에서 확인해 주세요.');
+      render(form,'60개월을 같은 조건으로 납입하는 비교용 합계',won(r.total),[['내가 납입한 원금',won(r.principal)],['정부기여금',won(r.contribution)],['납입원금에 붙는 이자',won(r.interest)],['일반적금과 비교한 차이',(r.extra>=0?'+':'−')+won(Math.abs(r.extra))]],'매달 납입액과 금리·기여금이 같다고 보고 계산했어요. 기여금에 붙는 은행이자는 제외했으며, 기존 계좌의 납입 이력이나 실제 만기액을 계산한 결과는 아니에요.');
     },
     health(form) {
       const r=F.health({expense:value('hi-expense'),ceiling:value('hi-ceiling'),paid:value('hi-paid')});
@@ -38,7 +39,8 @@
     },
     yearend(form) {
       const r=F.yearend({salary:value('ye-salary'),credit:value('ye-credit'),debit:value('ye-debit'),pensionSavings:value('ye-pension'),irp:value('ye-irp'),marginalRate:value('ye-rate')});
-      render(form,'카드·연금계좌로 줄어드는 예상 세금',won(r.effect),[['카드 공제가 시작되는 금액',won(r.threshold)],['카드 사용으로 받는 소득공제',won(r.cardDeduction)],['카드 공제로 줄어드는 예상 세금',won(r.cardEffect)],['연금계좌 공제 대상 납입액',won(r.eligiblePension)],['연금계좌 세액공제 (지방세 포함)',won(r.pensionCredit)]],'실제 돌려받는 환급액과는 달라요. 낼 세금이 적거나 다른 공제가 있으면 절세효과가 줄어들 수 있어요. 자녀 등 추가한도와 전통시장·대중교통 등 별도 사용분은 제외했어요.');
+      render(form,'세액한도 적용 전 최대 절세효과',won(r.effect),[['카드 공제가 시작되는 금액',won(r.threshold)],['카드 사용으로 받는 소득공제',won(r.cardDeduction)],['카드 공제로 줄어드는 세금의 가정 상한',won(r.cardEffect)],['연금계좌 공제 대상 납입액',won(r.eligiblePension)],['연금계좌 공제 가능액 (세액한도 적용 전)',won(r.pensionCredit)]],'실제 환급액도, 반드시 줄어드는 세금도 아니에요. 차감할 세금이 부족하면 이 금액을 모두 공제받지 못해요. 다른 공제와 결정세액을 함께 확인해 주세요.');
+      const capacityNote=document.createElement('p');capacityNote.className='notice';capacityNote.textContent='아직 낼 세금의 한도를 적용하지 않은 최대치예요. 예를 들어 연금계좌 공제 가능액이 99만원이어도 차감할 세금이 20만원만 남았다면 99만원을 환급받는다고 볼 수 없어요.';form.querySelector('.calc-result .result-value').after(capacityNote);
     }
   };
   document.querySelectorAll('form[data-calculator]').forEach(form => {

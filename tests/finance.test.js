@@ -36,6 +36,7 @@ test('youth contribution scales with payment and income tier; no fixed maximum f
   const r=F.youth({deposit:700000,tier:1,rate:.045,normalRate:.038,months:60});
   assert.equal(r.principal,42000000);assert.equal(r.contribution,1980000);assert.equal(r.interest,4803750);
   assert.equal(F.youth({deposit:0,tier:1,rate:0,normalRate:0,months:60}).total,0);
+  assert.throws(()=>F.youth({deposit:700000,tier:1,rate:.045,normalRate:.038,months:12}));
 });
 test('health: exclusions already reflected, prior payments and no negative refunds',()=>{
   assert.equal(F.health({expense:3500000,ceiling:1500000,paid:500000}).refund,1500000);
@@ -94,4 +95,15 @@ test('diagnostic regression: seniors never receive youth rent; interest/house/jo
   assert.ok(match(data.policies,{...young,interest:'tax'}).every(p=>p.category==='tax'));
   assert.ok(!match(data.policies,{...young,house:'parents',includeClosed:true}).some(p=>p.id==='youth-rent-2026'));
   assert.throws(()=>match(data.policies,{...young,age:''}));
+});
+test('historical income discovery includes current students and jobseekers',()=>{
+  for(const job of ['student','jobseeker','other']){
+    const policies=match(data.policies,{age:29,job,house:'parents',interest:'tax'});
+    assert.ok(policies.some(p=>p.id==='earned-income-tax-credit'));
+    assert.ok(policies.some(p=>p.id==='freelancer-tax-refund'));
+  }
+});
+test('every discovery policy links to an existing in-depth guide',()=>{
+  const fs=require('node:fs'),path=require('node:path');
+  for(const policy of data.policies){assert.ok(policy.guideId);assert.ok(fs.existsSync(path.join(__dirname,'../guides',policy.guideId+'.html')));}
 });

@@ -34,8 +34,9 @@
       event.preventDefault(); if (!valid || !form.reportValidity()) return;
       const subject = document.getElementById('contact-subject').value, body = message();
       const feedback = document.getElementById('contact-feedback');
-      if (body.length > 1800) { feedback.textContent = '내용이 길어 메일 앱 연결이 제한될 수 있습니다. 내용을 복사해 이메일로 보내 주세요.'; return; }
-      location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      if (mailto.length > 1800) { feedback.textContent = '내용이 길어 메일 앱 연결이 제한될 수 있습니다. 내용을 복사해 이메일로 보내 주세요.'; return; }
+      location.href = mailto;
       feedback.textContent = '메일 앱을 열도록 요청했습니다. 실제 발송은 메일 앱에서 완료해 주세요. 앱이 열리지 않으면 문의 내용을 복사해 보내 주세요.';
     });
   }

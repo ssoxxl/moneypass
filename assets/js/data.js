@@ -31,6 +31,7 @@ const MONEYPASS_DATA = {
         "복지로 또는 주소지 행정복지센터에 신청"
       ],
       "reason": "접수기간과 청년가구·원가구 심사가 필요합니다.",
+      "guideId": "guide-youth-rent",
       "officialUrl": "https://m.bokjiro.go.kr/ssis-tem/cms/mob/customer/notice/1309500_1155.html",
       "verified": "2026-10-22"
     },
@@ -61,6 +62,7 @@ const MONEYPASS_DATA = {
         "만기·해지 전에 해당 은행의 지급액 확인"
       ],
       "reason": "신규 신청 대상이 아닌 기존 가입자용 안내입니다.",
+      "guideId": "guide-youth-leap-vs-savings",
       "officialUrl": "https://fill4young.kinfa.or.kr/yla/main",
       "verified": "2026-10-22"
     },
@@ -73,9 +75,7 @@ const MONEYPASS_DATA = {
         15,
         69
       ],
-      "jobs": [
-        "jobseeker"
-      ],
+      "jobs": [],
       "houses": [],
       "amount": "Ⅰ유형 구직촉진수당 월 60만원 × 6개월",
       "status": "check",
@@ -91,7 +91,8 @@ const MONEYPASS_DATA = {
         "취업지원 신청서·가구원 정보 제출",
         "담당자 상담과 취업활동계획 수립 후 이행"
       ],
-      "reason": "가구단위 소득·재산과 다른 수당 참여 여부를 확인해야 합니다.",
+      "reason": "재학·근로 상태만으로 확정하지 않아요. 유형별 소득·재산·취업상태 요건과 다른 지원 참여 여부를 확인해 주세요.",
+      "guideId": "guide-employment-support",
       "officialUrl": "https://www.work24.go.kr/ua/z/z/1300/selectEmssRqutIntro.do?intro=1",
       "verified": "2026-10-22"
     },
@@ -104,11 +105,7 @@ const MONEYPASS_DATA = {
         0,
         120
       ],
-      "jobs": [
-        "employee",
-        "freelancer",
-        "business"
-      ],
+      "jobs": [],
       "houses": [],
       "amount": "가구유형·소득·재산 심사에 따라 차등",
       "status": "check",
@@ -124,7 +121,8 @@ const MONEYPASS_DATA = {
         "가구원·소득·재산 확인 후 신청",
         "심사 결과 및 지급일 확인"
       ],
-      "reason": "가구원 소득·재산과 귀속연도별 신청기간이 필요합니다.",
+      "reason": "지금은 학생이거나 일을 쉬고 있어도 해당 귀속연도의 소득이 있다면 확인해 보세요. 다른 소득과 가구·공제 요건에 따라 결과가 달라져요.",
+      "guideId": "guide-earned-income-credit",
       "officialUrl": "https://www.hometax.go.kr/",
       "verified": "2026-10-22"
     },
@@ -154,6 +152,7 @@ const MONEYPASS_DATA = {
         "공단의 안내에 따라 계좌 등록·신청"
       ],
       "reason": "실제 적용 진료비와 공단이 정한 개인별 상한액을 확인해야 합니다.",
+      "guideId": "guide-health-refund",
       "officialUrl": "https://www.nhis.or.kr/static/html/wbma/c/wbmac0209.html",
       "verified": "2026-10-22"
     },
@@ -185,6 +184,7 @@ const MONEYPASS_DATA = {
         "관할 고용센터에서 수급자격 인정 신청"
       ],
       "reason": "고용보험 가입 이력·이직 사유와 재취업활동 요건을 확인해야 합니다.",
+      "guideId": "guide-unemployment-benefit",
       "officialUrl": "https://1350.moel.go.kr/rtmview.do?id=1000320790",
       "verified": "2026-10-22"
     },
@@ -197,11 +197,7 @@ const MONEYPASS_DATA = {
         0,
         120
       ],
-      "jobs": [
-        "freelancer",
-        "business",
-        "employee"
-      ],
+      "jobs": [],
       "houses": [],
       "amount": "기납부세액과 결정세액 차이 · 추가 납부 가능",
       "status": "check",
@@ -217,7 +213,8 @@ const MONEYPASS_DATA = {
         "다른 소득·필요경비·공제와 기납부세액 검토",
         "종합소득세 및 지방소득세 신고·정산 확인"
       ],
-      "reason": "다른 소득과 업종별 필요경비를 확인해야 실제 정산액을 알 수 있습니다.",
+      "reason": "지금은 학생이거나 일을 쉬고 있어도 해당 귀속연도의 소득이 있다면 확인해 보세요. 다른 소득과 가구·공제 요건에 따라 결과가 달라져요.",
+      "guideId": "guide-freelancer-tax-return",
       "officialUrl": "https://www.hometax.go.kr/",
       "verified": "2026-10-22"
     },
@@ -247,7 +244,38 @@ const MONEYPASS_DATA = {
         "미환급액이 있을 경우 공식 절차로 신청"
       ],
       "reason": "본인인증 후 실제 미환급 내역을 확인해야 합니다.",
-      "officialUrl": "https://www.smartchoice.or.kr/",
+      "guideId": "guide-telecom-refund",
+      "officialUrl": "https://www.smartchoice.or.kr/smc/service/refund02.do?type=m",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "youth-future-savings",
+      "title": "청년미래적금",
+      "category": "finance",
+      "label": "저축",
+      "age": [
+        19,
+        40
+      ],
+      "jobs": [],
+      "houses": [],
+      "amount": "3년 만기 · 월 최대 50만원 · 유형별 기여금",
+      "status": "check",
+      "summary": "신규 정책저축상품을 찾는 청년을 위한 안내예요. 모집 일정과 개인·가구소득, 일반형·우대형 요건을 공식 사이트에서 확인해 보세요.",
+      "source": "future",
+      "requirements": [
+        "일반 연령 19~34세, 35세 이상은 병역이행기간 차감 등 인정 여부 확인",
+        "개인·가구소득 및 금융소득종합과세 등 가입 제한 확인",
+        "일반형 6%·우대형 12% 기여금의 유형별 가입·유지 요건 확인"
+      ],
+      "steps": [
+        "서민금융진흥원 최신 상품·모집 안내 확인",
+        "취급기관 앱에서 해당 모집기간에 가입 신청",
+        "소득·가구 등 가입요건 심사 후 계좌개설 안내 확인"
+      ],
+      "reason": "연령만으로 자격이 정해지지 않아요. 35세 이상은 병역기간 인정과 실제 모집일정을 먼저 확인해 주세요.",
+      "guideId": "guide-youth-future-savings",
+      "officialUrl": "https://www.kinfa.or.kr/financialProduct/youthFutureSavings.do",
       "verified": "2026-10-22"
     }
   ],
@@ -275,6 +303,22 @@ const MONEYPASS_DATA = {
     {
       "id": "guide-retirement-planning",
       "title": "퇴직금·국민연금·연말정산 계산을 읽는 법"
+    },
+    {
+      "id": "guide-earned-income-credit",
+      "title": "퇴사 후에도 확인하는 근로·자녀장려금 신청 기준"
+    },
+    {
+      "id": "guide-employment-support",
+      "title": "국민취업지원제도: 구직촉진수당과 신청 준비 순서"
+    },
+    {
+      "id": "guide-youth-future-savings",
+      "title": "청년미래적금과 청년도약계좌, 무엇을 구분해야 할까요?"
+    },
+    {
+      "id": "guide-telecom-refund",
+      "title": "통신 미환급액 조회: 번호이동 뒤 남은 돈 확인하기"
     }
   ]
 };

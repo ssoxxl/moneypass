@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   function number(value, name, min = 0, max = 1e12) {
-    if (value === '' || value === null || value === undefined || !Number.isFinite(Number(value))) throw new Error(`${name}을(를) 입력해 주세요.`);
+    if (value === '' || (typeof value === 'string' && !value.trim()) || value === null || value === undefined || !Number.isFinite(Number(value))) throw new Error(`${name}을(를) 입력해 주세요.`);
     const n = Number(value);
     if (n < min || n > max) throw new Error(`${name}: ${min.toLocaleString()}~${max.toLocaleString()} 범위로 입력해 주세요.`);
     return n;
@@ -49,7 +49,7 @@
   }
   function youth({deposit, tier, rate, normalRate, months}) {
     const d = number(deposit, '월 납입액', 0, 700000);
-    const m = integer(months, '납입 개월', 1, 60);
+    const m = integer(months, '표준 만기기간(개월)', 60, 60);
     const r = number(rate, '연 금리', 0, .3);
     const nr = number(normalRate, '비교 적금 금리', 0, .3);
     const principal = d * m;
