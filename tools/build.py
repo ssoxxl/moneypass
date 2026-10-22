@@ -58,7 +58,7 @@ def faq_html(items):
     return '<div class="faq-list">'+''.join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q,a in items)+'</div>'
 
 def homepage_explanation():
-    return '''<section class="section"><div class="section-heading"><div><span class="eyebrow">혜택을 읽는 방법</span><h2>지원금·환급금·세액공제는 어떻게 다를까요?</h2></div></div><div class="grid three"><article class="card"><h3>지원금은 신청 조건을 먼저 봐요</h3><p>청년월세나 구직촉진수당은 나이·가구소득·재산·활동 요건 등을 심사해요. 최대액은 모든 사람이 받는 정액이 아니고, 신청기간과 지급 회차도 확인해야 해요.</p></article><article class="card"><h3>환급금은 실제 내역이 있어야 해요</h3><p>미리 낸 세금이나 요금이 정산한 금액보다 많을 때 차액을 돌려받는 경우예요. 통신 미환급액이나 세금 환급은 본인의 실제 내역이 없으면 받을 돈도 없을 수 있어요.</p></article><article class="card"><h3>공제 가능액은 환급액과 달라요</h3><p>소득공제는 세금을 매길 소득을 줄이고 세액공제는 계산된 세금에서 빼요. 실제로 돌려받는 돈은 이미 낸 세금과 최종 결정세액까지 함께 봐야 알 수 있어요.</p></article></div></section>'''
+    return '''<section class="section"><div class="section-heading"><div><span class="eyebrow">혜택을 읽는 방법</span><h2>지원금·환급금·세액공제는 어떻게 다를까요?</h2></div></div><div class="grid three"><article class="card"><h3>지원금은 누가, 언제 받을 수 있나요?</h3><p>청년월세와 구직촉진수당은 나이, 가구 소득과 재산 등 제도별 요건을 심사해요. 대상에 해당하더라도 신청기간과 지급 조건을 충족해야 해요. 안내된 최대액이 모든 사람에게 지급되는 것은 아니에요.</p></article><article class="card"><h3>환급금은 어떤 돈을 돌려받나요?</h3><p>미리 낸 세금이나 요금이 최종 정산액보다 많으면 차액을 돌려받을 수 있어요. 세금은 신고와 공제 내역을, 통신요금은 해지와 과오납 내역 등을 확인해요. 조회 결과에 따라 돌려받을 금액이 없을 수도 있어요.</p></article><article class="card"><h3>세액공제액만큼 환급받을 수 있나요?</h3><p>소득공제는 세금 계산의 기준인 과세표준을 줄이고, 세액공제는 계산된 세금에서 일정 금액을 차감해요. 실제 환급 여부와 금액은 미리 낸 세금과 최종 결정세액을 비교해 정해져요.</p></article></div></section>'''
 
 def privacy_content():
     return f'''<h1>개인정보처리방침</h1><p class="fine">최종 수정 {VERIFIED}</p>
@@ -77,8 +77,11 @@ def render_guide_body(guide):
     sections = guide['sections'] + details['extra']
     body = f'<div class="breadcrumbs"><a href="../guides.html">가이드</a><span aria-hidden="true">/</span><span>{e(guide["category"])}</span></div><article class="article card"><header><span class="eyebrow">{e(guide["category"])}</span><h1>{e(guide["title"])}</h1><p class="lede">{e(guide["summary"])}</p><p class="fine">머니패스 편집 · 공식 자료 확인 {VERIFIED}</p></header><p class="reader-note">{e(details["reader"])}</p><nav class="toc" aria-label="목차"><strong>이 글에서 확인할 내용</strong><ol>'
     body += ''.join(f'<li><a href="#part-{i}">{e(title)}</a></li>' for i,(title,_) in enumerate(sections,1))
+    body += ''.join(f'<li><a href="#evidence-{i}">{e(title)}</a></li>' for i,(title,_,_) in enumerate(details.get('evidence_sections',[]),1))
     body += '<li><a href="#prepare">신청 전 체크리스트</a></li><li><a href="#questions">자주 묻는 질문</a></li></ol></nav>'
     body += ''.join(f'<section id="part-{i}"><h2>{e(title)}</h2><p>{e(text)}</p></section>' for i,(title,text) in enumerate(sections,1))
+    for i,(title,text,key) in enumerate(details.get('evidence_sections',[]),1):
+        body += f'<section id="evidence-{i}"><h2>{e(title)}</h2><p>{e(text)}</p><p class="section-source">관련 공식 자료: {source(key)}</p></section>'
     if details['example']:
         body += '<section class="worked-example"><h2>예시로 이해하기</h2>'+info_table(details['example_title'],details['example'])+f'<p class="example-note">{e(details["example_note"])}</p></section>'
     body += '<section id="prepare" class="next-step"><h2>신청 전 체크리스트</h2><ul>'+''.join(f'<li>{e(item)}</li>' for item in details['checklist'])+'</ul></section><section id="questions"><h2>자주 묻는 질문</h2>'+faq_html(details['faq'])+'</section>'
