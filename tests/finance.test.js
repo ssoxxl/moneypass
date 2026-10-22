@@ -107,3 +107,17 @@ test('every discovery policy links to an existing in-depth guide',()=>{
   const fs=require('node:fs'),path=require('node:path');
   for(const policy of data.policies){assert.ok(policy.guideId);assert.ok(fs.existsSync(path.join(__dirname,'../guides',policy.guideId+'.html')));}
 });
+
+test('situation discovery preserves age limits and avoids inferring child age from parent',()=>{
+  const base={age:35,job:'jobseeker',house:'rent',interest:'all'};
+  const find=criteria=>match(data.policies,{...base,...criteria},data.situations);
+  const retired=find({situation:'retirement'});
+  for(const id of ['unemployment-benefit-calc','unemployment-credit','health-continued','training-card']) assert.ok(retired.some(p=>p.id===id),id);
+  assert.ok(!find({age:60,situation:'retirement'}).some(p=>p.id==='unemployment-credit'));
+  assert.ok(!find({}).some(p=>p.category==='family'));
+  assert.ok(find({situation:'parenting'}).some(p=>p.id==='parent-benefit'));
+  assert.ok(find({interest:'family'}).some(p=>p.id==='first-meeting-voucher'));
+  assert.ok(find({age:65,situation:'senior'}).some(p=>p.id==='basic-pension'));
+  assert.ok(!find({age:64,situation:'senior'}).some(p=>p.id==='basic-pension'));
+  for(const route of Object.values(data.situations)) for(const id of route.ids) assert.ok(data.policies.some(p=>p.id===id),id);
+});

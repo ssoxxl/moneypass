@@ -277,8 +277,349 @@ const MONEYPASS_DATA = {
       "guideId": "guide-youth-future-savings",
       "officialUrl": "https://www.kinfa.or.kr/financialProduct/youthFutureSavings.do",
       "verified": "2026-10-22"
+    },
+    {
+      "id": "training-card",
+      "title": "국민내일배움카드",
+      "category": "job",
+      "label": "직업훈련",
+      "age": [
+        0,
+        74
+      ],
+      "jobs": [],
+      "source": "training",
+      "kind": "훈련비 지원",
+      "amount": "훈련비 계좌 지원 · 현금 수당과 구분",
+      "summary": "구직자뿐 아니라 재직자도 직업훈련 지원을 살펴볼 수 있어요. 발급 제외 대상과 과정별 자부담을 먼저 확인하세요.",
+      "requirements": [
+        "연령·직종·소득·재학 상태에 따른 발급 제외 여부",
+        "훈련과정의 지원율·자부담·출석 요건",
+        "훈련장려금은 훈련비와 별도 자격 심사"
+      ],
+      "steps": [
+        "고용24에서 발급 자격과 구직등록 필요 여부 확인",
+        "카드 신청 후 희망 훈련의 일정·자부담 비교",
+        "수강 신청과 결제, 출석·수료 조건 확인"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-training-card",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://www.work24.go.kr/hr/h/a/1100/selectIssuGudn.do",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "unemployment-credit",
+      "title": "국민연금 실업크레딧",
+      "category": "job",
+      "label": "퇴사·연금",
+      "age": [
+        18,
+        59
+      ],
+      "jobs": [
+        "jobseeker"
+      ],
+      "source": "credit",
+      "kind": "보험료 지원",
+      "amount": "연금보험료 75% 지원 · 생애 최대 12개월",
+      "summary": "구직급여 수급 중 연금보험료 일부를 지원받고 가입기간을 이어가는 제도예요. 현금 실업급여와는 별도예요.",
+      "requirements": [
+        "구직급여 수급 및 국민연금 보험료 납부 이력",
+        "18세 이상 60세 미만 등 대상 요건",
+        "재산·소득 제한과 이전 지원기간 확인"
+      ],
+      "steps": [
+        "구직급여 신청 때 실업크레딧 안내 확인",
+        "국민연금공단에서 대상·신청기한·본인 부담 확인",
+        "신청 후 고지와 납부 결과, 가입기간 반영 확인"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-unemployment-credit",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://m.nps.or.kr/pnsinfo/ntpsklg/getOHAF0095M0.do?menuId=MN24001131",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "health-continued",
+      "title": "건강보험 임의계속가입",
+      "category": "job",
+      "label": "퇴사·건강보험",
+      "age": [
+        0,
+        120
+      ],
+      "jobs": [
+        "jobseeker"
+      ],
+      "source": "continue",
+      "kind": "보험료 비교",
+      "amount": "지역보험료와 비교 · 적용 가능 기간 최대 36개월",
+      "summary": "퇴직 후 지역보험료 부담이 커졌다면 임의계속보험료와 비교할 수 있어요. 무조건 더 저렴한 제도는 아니에요.",
+      "requirements": [
+        "퇴직 전 18개월 동안 직장가입 자격 통산 1년 이상 등",
+        "최초 지역보험료 납부기한 기준 신청기한 확인",
+        "피부양자 가능 여부와 실제 보험료 비교"
+      ],
+      "steps": [
+        "최초 지역보험료 고지서와 납부기한 확인",
+        "공단에 지역·임의계속보험료 및 피부양자 가능 여부 문의",
+        "기한 안에 신청하고 최초 보험료 납부 등 유지 요건 확인"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-health-continued",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://easylaw.go.kr/CSP/CnpClsMain.laf?ccfNo=2&cciNo=1&cnpClsNo=3&csmSeq=1063&popMenu=ov",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "housing-benefit",
+      "title": "주거급여",
+      "category": "housing",
+      "label": "주거",
+      "age": [
+        0,
+        120
+      ],
+      "jobs": [],
+      "source": "housingbenefit",
+      "kind": "임차료·주택수선",
+      "amount": "가구·지역·주거 형태에 따라 차등",
+      "summary": "저소득 가구의 임차료 또는 자가 주택 수선을 지원해요. 청년월세 지원과 대상·산정 방식이 달라요.",
+      "requirements": [
+        "가구원 구성과 소득인정액 심사",
+        "임차·자가 등 실제 주거 형태와 조사",
+        "다른 주거지원 및 청년 분리지급 해당 여부"
+      ],
+      "steps": [
+        "행정복지센터 또는 복지로에서 급여 상담",
+        "가구·소득재산·임대차 자료 제출",
+        "주택조사 및 심사 결과와 지급 내용 확인"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-housing-benefit",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://www.molit.go.kr/USR/policyTarget/m_24066/dtl.jsp?idx=1065",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "basic-pension",
+      "title": "기초연금",
+      "category": "senior",
+      "label": "노후",
+      "age": [
+        65,
+        120
+      ],
+      "jobs": [],
+      "source": "basicpension",
+      "kind": "노후 소득지원",
+      "amount": "소득인정액·연금·가구 상황에 따라 산정",
+      "summary": "65세 이상 어르신의 소득·재산 등을 심사하는 제도예요. 국민연금 노령연금과 구분해서 확인하세요.",
+      "requirements": [
+        "연령·국적·거주 및 소득인정액 요건",
+        "배우자 소득·재산 및 직역연금 관련 제한",
+        "국민연금 수급액과 부부 수급 등에 따른 산정"
+      ],
+      "steps": [
+        "복지로 또는 국민연금공단에서 대상 상담",
+        "행정복지센터·공단 또는 복지로에서 신청",
+        "조사 결과와 개인별 결정액 확인"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-basic-pension",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001164",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "national-scholarship",
+      "title": "국가장학금 Ⅰ유형",
+      "category": "education",
+      "label": "교육",
+      "age": [
+        0,
+        120
+      ],
+      "jobs": [],
+      "source": "scholarship",
+      "kind": "등록금 지원",
+      "amount": "해당 학기 등록금 범위 내 차등",
+      "summary": "대학생의 학자금 지원구간과 학적·성적 등을 심사해요. 생활비 지원이나 대출과는 구분해야 해요.",
+      "requirements": [
+        "국적·대상 대학·학적 및 학기별 신청",
+        "학자금 지원구간·가구원 동의·서류 제출",
+        "성적·이수학점과 예외·수혜 횟수 확인"
+      ],
+      "steps": [
+        "한국장학재단에서 해당 학기 신청일정 확인",
+        "신청 후 가구원 동의와 필요서류 완료",
+        "심사·대학 지급 및 등록금 대출 정산 확인"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-national-scholarship",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://www.kosaf.go.kr/ko/scholar.do?pg=scholarship05_12_01_01",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "parent-benefit",
+      "title": "부모급여",
+      "category": "family",
+      "label": "출산·양육",
+      "age": [
+        0,
+        120
+      ],
+      "jobs": [],
+      "source": "parent",
+      "kind": "양육지원",
+      "amount": "0세 월 100만원·1세 월 50만원 기준",
+      "summary": "자녀의 월령과 보육서비스 이용 상태에 따라 지급 방식을 확인해야 해요. 부모 나이가 아닌 아동 기준이에요.",
+      "requirements": [
+        "대상 아동의 출생일·월령과 국적·거주 요건",
+        "어린이집·종일제 아이돌봄 이용에 따른 조정",
+        "신청 시점과 소급 적용 여부"
+      ],
+      "steps": [
+        "출생신고와 함께 신청 경로 확인",
+        "행정복지센터 또는 복지로 등 공식 경로 신청",
+        "보육서비스 이용 변경 시 급여 변경 신청 확인"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-parent-benefit",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://110.go.kr/data/counselView.do?curPage=1&num=A01_720893&scCate1=&scCate2=&scIntt=&scText=&scType=",
+      "verified": "2026-10-22"
+    },
+    {
+      "id": "first-meeting-voucher",
+      "title": "첫만남이용권",
+      "category": "family",
+      "label": "출산",
+      "age": [
+        0,
+        120
+      ],
+      "jobs": [],
+      "source": "birth",
+      "kind": "출생 바우처",
+      "amount": "2024년 이후 출생 기준 첫째 200만원·둘째 이상 300만원",
+      "summary": "출생아를 위한 일회성 이용권이에요. 지급 계좌의 현금이 아니라 바우처 사용 조건을 확인해야 해요.",
+      "requirements": [
+        "출생신고·주민등록 등 대상 아동 요건",
+        "출생순위와 지급 방식",
+        "출생일 기준 사용기한 및 제한 업종"
+      ],
+      "steps": [
+        "출생신고·통합신청 때 서비스 신청 여부 확인",
+        "공식 경로에서 신청하고 바우처 지급 확인",
+        "카드 이용 가능 여부·잔액·사용기한 관리"
+      ],
+      "houses": [],
+      "status": "check",
+      "guideId": "guide-first-meeting-voucher",
+      "reason": "선택한 상황에서 살펴볼 후보예요. 아래 추가 조건을 확인한 뒤 공식 기관에서 자격을 확인하세요.",
+      "officialUrl": "https://www.mohw.go.kr/menu.es?mid=a10711020100",
+      "verified": "2026-10-22"
     }
   ],
+  "situations": {
+    "retirement": {
+      "title": "퇴사 후 생활비와 보험료",
+      "ids": [
+        "unemployment-benefit-calc",
+        "unemployment-credit",
+        "health-continued",
+        "national-employment-support",
+        "training-card",
+        "housing-benefit"
+      ],
+      "steps": [
+        "회사 서류와 고용보험 이력으로 구직급여 자격부터 확인하세요.",
+        "지역 건강보험 고지서와 연금 납부 이력을 확인해 신청기한을 챙기세요.",
+        "훈련·취업지원은 참여 시기와 수당 중복 제한을 상담한 뒤 선택하세요."
+      ],
+      "caution": "구직급여와 구직촉진수당은 동시 수령을 전제하지 마세요. 보험료 지원과 훈련비도 생활비 현금과 구분해야 해요."
+    },
+    "housing": {
+      "title": "월세·주거비가 부담될 때",
+      "ids": [
+        "housing-benefit",
+        "youth-rent-2026"
+      ],
+      "steps": [
+        "임대차계약서에서 월세·보증금·관리비를 구분하세요.",
+        "가구 구성과 소득·재산, 이전 지원 내역을 정리하세요.",
+        "주거급여와 청년월세의 접수기간·조정 규칙을 각각 확인하세요."
+      ],
+      "caution": "주거 형태에 따라 수선 지원과 임차료 지원이 달라요. 마감 사업은 아래 선택란을 켜야 표시돼요."
+    },
+    "parenting": {
+      "title": "출산 후 양육비를 준비할 때",
+      "ids": [
+        "parent-benefit",
+        "first-meeting-voucher",
+        "earned-income-tax-credit"
+      ],
+      "steps": [
+        "자녀의 출생일·월령과 출생신고·통합신청 내역을 확인하세요.",
+        "부모급여의 보육 형태별 지급 방식과 첫만남이용권 사용기한을 구분하세요.",
+        "소득이 있는 가구라면 자녀장려금도 해당 귀속연도 기준으로 따로 확인하세요."
+      ],
+      "caution": "방문자 나이는 자녀 나이가 아니에요. 보육료와 현금급여를 중복 합산하지 마세요."
+    },
+    "education": {
+      "title": "학비·직업훈련이 필요할 때",
+      "ids": [
+        "national-scholarship",
+        "training-card",
+        "national-employment-support"
+      ],
+      "steps": [
+        "대학 등록금인지 취업 목적 훈련비인지 먼저 구분하세요.",
+        "학기별 신청·가구원 동의 또는 카드 발급 제외 요건을 확인하세요.",
+        "다른 장학금·대출·수당과의 중복 및 정산을 확인하세요."
+      ],
+      "caution": "장학금과 훈련비 한도는 자유롭게 쓰는 생활비 현금이 아니에요."
+    },
+    "senior": {
+      "title": "노후 소득과 의료비가 걱정될 때",
+      "ids": [
+        "basic-pension",
+        "health-insurance-refund",
+        "telecom-utility-refund"
+      ],
+      "steps": [
+        "기초연금은 본인과 배우자의 소득·재산 및 연금 내역을 준비하세요.",
+        "의료비는 대상자별·진료연도별로 공단 인정액을 확인하세요.",
+        "환급 조회는 실제 내역이 있어야 하며 최대액을 합산하지 마세요."
+      ],
+      "caution": "기초연금은 국민연금과 다른 제도예요. 결과에 없는 제도도 있으므로 복지로·보조금24에서 추가 확인하세요."
+    },
+    "tax": {
+      "title": "세금·미환급액을 확인할 때",
+      "ids": [
+        "earned-income-tax-credit",
+        "freelancer-tax-refund",
+        "telecom-utility-refund",
+        "health-insurance-refund"
+      ],
+      "steps": [
+        "소득 귀속연도와 실제 납부·이용 내역을 정리하세요.",
+        "신고가 필요한 정산과 단순 환급 조회를 구분하세요.",
+        "신고·신청 후 접수와 최종 결정 내역까지 확인하세요."
+      ],
+      "caution": "예상 공제액과 실제 환급액은 달라요. 신고 결과에 따라 추가 납부도 생길 수 있어요."
+    }
+  },
   "guides": [
     {
       "id": "guide-youth-leap-vs-savings",
@@ -319,6 +660,38 @@ const MONEYPASS_DATA = {
     {
       "id": "guide-telecom-refund",
       "title": "통신 미환급액 조회: 번호이동 뒤 남은 돈 확인하기"
+    },
+    {
+      "id": "guide-training-card",
+      "title": "국민내일배움카드: 대상 조건과 신청 준비"
+    },
+    {
+      "id": "guide-unemployment-credit",
+      "title": "국민연금 실업크레딧: 대상 조건과 신청 준비"
+    },
+    {
+      "id": "guide-health-continued",
+      "title": "건강보험 임의계속가입: 대상 조건과 신청 준비"
+    },
+    {
+      "id": "guide-housing-benefit",
+      "title": "주거급여: 대상 조건과 신청 준비"
+    },
+    {
+      "id": "guide-basic-pension",
+      "title": "기초연금: 대상 조건과 신청 준비"
+    },
+    {
+      "id": "guide-national-scholarship",
+      "title": "국가장학금 Ⅰ유형: 대상 조건과 신청 준비"
+    },
+    {
+      "id": "guide-parent-benefit",
+      "title": "부모급여: 대상 조건과 신청 준비"
+    },
+    {
+      "id": "guide-first-meeting-voucher",
+      "title": "첫만남이용권: 대상 조건과 신청 준비"
     }
   ]
 };

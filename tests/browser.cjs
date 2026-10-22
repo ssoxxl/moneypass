@@ -34,9 +34,10 @@ const server=http.createServer((req,res)=>{
       }
       await page.goto(base+'/index.html');await page.locator('#diag-age').fill('70');await page.locator('#diag-closed').check();await page.locator('#diagnostic-form button').click();
       assert.equal(await page.locator('[data-policy-id="youth-rent-2026"]').count(),0);
-      await page.locator('#diag-interest').selectOption('housing');await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('.empty-state').isVisible());
+      await page.locator('#diag-interest').selectOption('housing');await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('[data-policy-id="housing-benefit"]').isVisible());
       await page.locator('#diag-age').fill('29');await page.locator('#diag-house').selectOption('rent');await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('[data-policy-id="youth-rent-2026"]').isVisible());
-      await page.locator('#diag-closed').uncheck();await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('.empty-state button').isVisible());await page.locator('.empty-state button').click();assert.ok(await page.locator('[data-policy-id="youth-rent-2026"] .policy-guide').isVisible());
+      await page.locator('#diag-closed').uncheck();await page.locator('#diagnostic-form button').click();assert.equal(await page.locator('[data-policy-id="youth-rent-2026"]').count(),0);assert.ok(await page.locator('[data-policy-id="housing-benefit"]').isVisible());
+      await page.locator('#diag-closed').check();await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('[data-policy-id="youth-rent-2026"] .policy-guide').isVisible());
       await page.locator('#diag-interest').selectOption('tax');await page.locator('#diag-job').selectOption('student');await page.locator('#diagnostic-form button').click();assert.ok(await page.locator('[data-policy-id="earned-income-tax-credit"]').isVisible());
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
       await page.goto(base+'/calculator.html');
@@ -69,6 +70,25 @@ const server=http.createServer((req,res)=>{
       const calcAudit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();assert.deepEqual(calcAudit.violations.map(v=>({id:v.id,impact:v.impact})),[],'calculator accessibility');
       assert.deepEqual(errors,[],`browser errors width=${width}`);await context.close();
     }
+    const flowContext=await browser.newContext({viewport:{width:360,height:900}});
+    const flowPage=await flowContext.newPage();
+    await flowPage.route('**/*',route=>new URL(route.request().url()).origin===base?route.continue():route.abort());
+    await flowPage.goto(base+'/index.html');
+    await flowPage.locator('#diag-situation').selectOption('retirement');
+    await flowPage.locator('#diagnostic-form button').click();
+    assert.ok(await flowPage.locator('#policy-unemployment-credit').count());
+    assert.ok((await flowPage.locator('#diagnostic-results').innerText()).includes('지원 성격을 비교'));
+    await flowPage.locator('a[href="#policy-unemployment-credit"]').click();
+    await flowPage.locator('#diag-situation').selectOption('parenting');
+    await flowPage.locator('#diagnostic-form button').click();
+    assert.equal(await flowPage.locator('#policy-parent-benefit').count(),1);
+    assert.equal(await flowPage.locator('#policy-first-meeting-voucher').count(),1);
+    assert.ok(await flowPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+    await flowPage.screenshot({path:path.join(root,'artifacts/benefits-parenting-360.png'),fullPage:true});
+    await flowPage.locator('#policy-parent-benefit .policy-guide').click();
+    assert.ok((await flowPage.locator('article').innerText()).includes('함께 비교할 제도'));
+    assert.equal(await flowPage.locator('link[rel="canonical"]').getAttribute('href'),'https://moneypass.ssoxxl.com/guides/guide-parent-benefit.html');
+    await flowContext.close();
     const nojs=await browser.newContext({javaScriptEnabled:false});const p=await nojs.newPage();await p.goto(base+'/guides/guide-health-refund.html');assert.ok((await p.locator('article').innerText()).includes('제외'));await nojs.close();
     const configured=await browser.newPage();
     const ads={client:'ca-pub-1234567890123456',autoAds:true,loadScript:true};
