@@ -151,6 +151,7 @@ def page(path, title, description, content, active='', scripts=(), article=False
         schema = '<script type="application/ld+json">'+json.dumps(structured,ensure_ascii=False).replace('<','\\u003c')+'</script>'
     write(path,f'''<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="naver-site-verification" content="91cf5d909b667736e993d8a895af25275b8f77e3">
 <title>{e(title)} | 머니패스</title><meta name="description" content="{e(description)}">
 <meta name="theme-color" content="#163d32"><meta property="og:type" content="{'article' if article else 'website'}"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(description)}">{canonical}
 <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="{prefix}assets/css/style.css">{schema}{js}</head>
