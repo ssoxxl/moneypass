@@ -1,174 +1,56 @@
-/**
- * MoneyPass - 맞춤형 지원금/환급금 30초 진단 엔진 (모던 UI)
- */
-
-function runDiagnostic() {
-  const age = document.getElementById("diag-age").value;
-  const job = document.getElementById("diag-job").value;
-  const income = document.getElementById("diag-income").value;
-  const house = document.getElementById("diag-house").value;
-  const interest = document.getElementById("diag-interest").value;
-
-  const resultContainer = document.getElementById("diagnostic-results");
-  const listContainer = document.getElementById("policy-list-output");
-  const totalAmountEl = document.getElementById("result-total-amount");
-  const matchCountEl = document.getElementById("result-match-count");
-  const loadingIndicator = document.getElementById("diag-loading");
-
-  if (loadingIndicator) loadingIndicator.classList.remove("hidden");
-  if (resultContainer) resultContainer.classList.add("hidden");
-
-  setTimeout(() => {
-    if (loadingIndicator) loadingIndicator.classList.add("hidden");
-
-    // Filtering logic
-    const matchedPolicies = MONEYPASS_DATA.policies.filter(item => {
-      const ageMatch = item.targetAge.includes("all") || item.targetAge.includes(age);
-      const jobMatch = item.targetJob.includes("all") || item.targetJob.includes(job);
-      const incomeMatch = item.targetIncome.includes("all") || item.targetIncome.includes(income);
-      const houseMatch = item.targetHouse.includes("all") || item.targetHouse.includes(house);
-      const interestMatch = (interest === "all") || (item.category === interest);
-
-      let score = 0;
-      if (ageMatch) score++;
-      if (jobMatch) score++;
-      if (incomeMatch) score++;
-      if (houseMatch) score++;
-      if (interestMatch) score += 2;
-
-      return score >= 3;
-    });
-
-    let totalEst = 0;
-    listContainer.innerHTML = "";
-
-    matchedPolicies.forEach(policy => {
-      totalEst += (policy.amountNum || 0);
-
-      const card = document.createElement("div");
-      card.className = "bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between";
-      card.innerHTML = `
-        <div>
-          <div class="flex items-center justify-between gap-2 mb-3">
-            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">${policy.categoryName}</span>
-            <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">${policy.badge}</span>
-          </div>
-          <h4 class="text-lg font-extrabold text-slate-900 mb-2 leading-snug">${policy.title}</h4>
-          <div class="text-base font-black text-emerald-600 mb-3 flex items-center gap-1">
-            <span>💸</span> ${policy.maxAmount}
-          </div>
-          <p class="text-sm text-slate-600 leading-relaxed mb-5">${policy.summary}</p>
-        </div>
-
-        <div class="flex items-center gap-2 pt-4 border-t border-slate-100">
-          <button onclick="openPolicyModal('${policy.id}')" class="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition text-center">
-            상세 요건 보기
-          </button>
-          <a href="${policy.officialUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition text-center shadow-sm">
-            공식 신청 &rarr;
-          </a>
-        </div>
-      `;
-      listContainer.appendChild(card);
-    });
-
-    const formattedTotal = (totalEst / 10000).toLocaleString();
-    totalAmountEl.textContent = `최대 약 ${formattedTotal}만 원 수혜 가능`;
-    matchCountEl.textContent = `회원님의 조건에 부합하는 정책 및 환급 혜택이 총 ${matchedPolicies.length}건 발견되었습니다.`;
-
-    resultContainer.classList.remove("hidden");
-    resultContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 400);
-}
-
-// Modal handling
-function openPolicyModal(policyId) {
-  const policy = MONEYPASS_DATA.policies.find(p => p.id === policyId);
-  if (!policy) return;
-
-  const modal = document.getElementById("policy-modal");
-  const modalBody = document.getElementById("modal-body-content");
-
-  const reqHtml = policy.requirements.map(r => `<li class="flex items-start gap-2"><span class="text-blue-500 font-bold">•</span><span>${r}</span></li>`).join("");
-  const stepHtml = policy.steps.map((s, idx) => `<li class="flex items-start gap-2.5"><span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span><span>${s}</span></li>`).join("");
-
-  modalBody.innerHTML = `
-    <div class="mb-4">
-      <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">${policy.categoryName}</span>
-      <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 ml-1.5">${policy.badge}</span>
-    </div>
-    
-    <h3 class="text-xl sm:text-2xl font-black text-slate-900 mb-2 leading-tight">${policy.title}</h3>
-    <div class="text-lg font-black text-emerald-600 mb-4">${policy.maxAmount}</div>
-    <p class="text-sm text-slate-600 leading-relaxed mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-      ${policy.summary}
-    </p>
-
-    <div class="space-y-6">
-      <div>
-        <h4 class="text-sm font-black text-slate-900 mb-2.5 flex items-center gap-1.5">
-          <span>📋</span> 필수 자격 요건
-        </h4>
-        <ul class="text-xs sm:text-sm text-slate-700 space-y-2">
-          ${reqHtml}
-        </ul>
-      </div>
-
-      <div>
-        <h4 class="text-sm font-black text-slate-900 mb-2.5 flex items-center gap-1.5">
-          <span>🚀</span> 신청 절차 및 서류
-        </h4>
-        <ol class="text-xs sm:text-sm text-slate-700 space-y-2.5">
-          ${stepHtml}
-        </ol>
-      </div>
-
-      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs sm:text-sm text-amber-900 leading-relaxed">
-        <strong>💡 머니패스 핵심 꿀팁:</strong><br>
-        ${policy.tips}
-      </div>
-    </div>
-
-    <div class="mt-6 pt-4 border-t border-slate-100">
-      <a href="${policy.officialUrl}" target="_blank" rel="noopener noreferrer" class="block w-full py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-center text-sm shadow-md transition">
-        정부 공식 신청 포털로 이동하기 &rarr;
-      </a>
-    </div>
-  `;
-
-  modal.classList.remove("hidden");
-}
-
-function closePolicyModal() {
-  const modal = document.getElementById("policy-modal");
-  if (modal) modal.classList.add("hidden");
-}
-
-
-// Viral Share Feature
-function shareDiagnosticResult() {
-  const totalText = document.getElementById("result-total-amount").textContent;
-  const countText = document.getElementById("result-match-count").textContent;
-  const shareMsg = `[머니패스] 2026 내 숨은 지원금·환급금 진단 결과!\n💸 ${totalText}\n📌 ${countText}\n\n너도 30초 만에 공짜로 조회해봐 👉 ${window.location.href}`;
-
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(shareMsg).then(() => {
-      alert("카카오톡이나 SNS에 바로 붙여넣기 할 수 있도록 결과 문구가 복사되었어 형!");
-    });
-  } else {
-    alert(shareMsg);
+/* Matching is a discovery filter, never an eligibility decision. */
+(function (root) {
+  'use strict';
+  function matchPolicies(policies, {age,job,house,interest,includeClosed=false}) {
+    const n = Number(age);
+    if (age === '' || !Number.isInteger(n) || n < 0 || n > 120) throw new Error('만 나이는 0~120의 정수로 입력해 주세요.');
+    return policies.filter(p =>
+      (includeClosed || p.status !== 'closed') &&
+      n >= p.age[0] && n <= p.age[1] &&
+      (!p.jobs.length || p.jobs.includes(job)) &&
+      (!p.houses.length || p.houses.includes(house)) &&
+      (interest === 'all' || p.category === interest)
+    );
   }
-}
-
-// 1-sec Document Checklist Copy
-function copyDocChecklist() {
-  const checklist = `[머니패스 2026 정부지원금/환급금 필수 구비서류 체크리스트]\n1. 주민등록등본 (정부24 발급 - 세대원 포함)\n2. 소득금액증명원 (홈택스 발급 - 직전년도 근로/사업소득)\n3. 건강보험료 납부확인서 (최근 3개월치)\n4. 주택임대차계약서 사본 및 월세 이체 내역서 (주거지원 신청 시)\n5. 신분증 및 본인 명의 계좌 통장 사본\n\n📌 상세 진단 및 계산기: ${window.location.origin}`;
-
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(checklist).then(() => {
-      alert("주민센터/신청 시 필요한 서류 체크리스트가 클립보드에 복사되었어 형! 메모장에 붙여넣고 확인해봐!");
-    });
-  } else {
-    alert(checklist);
+  root.moneyMatchPolicies = matchPolicies;
+  if (typeof module !== 'undefined' && module.exports) module.exports = matchPolicies;
+  if (typeof document === 'undefined') return;
+  const form = document.getElementById('diagnostic-form');
+  if (!form) return;
+  const text = (tag, value, className='') => { const el = document.createElement(tag); el.textContent = value; el.className = className; return el; };
+  function list(items, tag='ul') { const el = document.createElement(tag); items.forEach(item => el.appendChild(text('li',item))); return el; }
+  function card(policy) {
+    const el = document.createElement('article'); el.className = 'card policy-card';
+    el.dataset.policyId = policy.id;
+    const closed = policy.status === 'closed';
+    el.append(text('span',closed ? '모집 마감 · 기존 가입자 안내' : '신청 조건을 확인해 보세요',`badge${closed?' closed':''}`),text('h3',policy.title),text('p',policy.amount,'amount'),text('p',policy.summary));
+    const details = document.createElement('details');
+    details.append(text('summary','신청 조건과 준비할 것'),text('h4','이 조건을 확인해 주세요'),list(policy.requirements),text('h4','이렇게 신청해요'),list(policy.steps,'ol'));
+    el.append(text('p',policy.reason),details,text('p',`자료 확인 ${policy.verified}${policy.end ? ' · 공고상 접수 종료 '+policy.end : ''}`,'fine'));
+    const a = document.createElement('a'); a.href = policy.officialUrl; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.className = 'button secondary'; a.textContent = '공식 안내 확인하기 ↗';
+    el.append(a);
+    const related = {'earned-income-tax-credit':['eitc/','장려금 예상액 계산하기'],'youth-rent-2026':['rent-tax-credit/','월세 세액공제 알아보기'],'unemployment-benefit-calc':['average-wage/','평균임금 먼저 계산하기']}[policy.id];
+    if (related) {
+      const link=document.createElement('a');link.href='https://calc.ssoxxl.com/'+related[0];link.target='_blank';link.rel='noopener noreferrer';link.className='text-link policy-calculator';link.textContent=related[1]+' · 계산왕 ↗';el.append(link);
+    }
+    return el;
   }
-}
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    const error = form.querySelector('.form-error'), output = document.getElementById('diagnostic-results');
+    error.hidden = true;
+    try {
+      const matches = matchPolicies(MONEYPASS_DATA.policies, {
+        age:document.getElementById('diag-age').value,job:document.getElementById('diag-job').value,house:document.getElementById('diag-house').value,interest:document.getElementById('diag-interest').value,includeClosed:document.getElementById('diag-closed').checked
+      });
+      output.replaceChildren(text('h3',`살펴볼 만한 혜택 ${matches.length}개를 찾았어요`),text('p','신청 대상인지는 소득·재산 등 세부 조건에 따라 달라져요. 각 안내에서 신청 조건과 접수기간을 확인해 주세요.'));
+      const grid = document.createElement('div'); grid.className = 'grid two';
+      matches.forEach(p => grid.appendChild(card(p)));
+      if (!matches.length) output.appendChild(text('p','이 조건으로 소개해 드릴 혜택이 아직 없어요. 관심 분야를 ‘전체’로 바꿔보거나 정부24·복지로에서 다른 혜택도 찾아보세요.','empty-state'));
+      output.appendChild(grid); output.hidden = false; output.focus();
+    } catch (err) { output.hidden = true; error.textContent = err.message; error.hidden = false; document.getElementById('diag-age').focus(); }
+  });
+  const resetResults = () => { document.getElementById('diagnostic-results').hidden = true; form.querySelector('.form-error').hidden = true; };
+  form.addEventListener('input', resetResults);
+  form.addEventListener('change', resetResults);
+})(typeof globalThis !== 'undefined' ? globalThis : this);

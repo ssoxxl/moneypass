@@ -1,255 +1,69 @@
-/**
- * MoneyPass - 초고효율 금융/환급 인터랙티브 계산기 모듈 풀 패키지 (7종)
- */
-
-// 1. 실업급여 모의계산기
-function calculateUnemployment() {
-  const ageOver50 = document.getElementById("ue-age").value === "over50";
-  const period = parseInt(document.getElementById("ue-period").value, 10);
-  const monthlySalary = parseFloat(document.getElementById("ue-salary").value) || 0;
-  const dailyHours = parseInt(document.getElementById("ue-hours").value, 10) || 8;
-
-  if (monthlySalary <= 0) {
-    alert("퇴사 전 3개월 평균 월급을 입력해줘 형!");
-    return;
+'use strict';
+(function () {
+  const F = MoneyFinance;
+  const won = n => Math.round(n).toLocaleString('ko-KR')+' 원';
+  const value = id => document.getElementById(id).value;
+  function render(form,label,amount,rows,note) {
+    const output = form.querySelector('.calc-result'); output.replaceChildren();
+    const el = (tag,text,cls) => { const node = document.createElement(tag); node.textContent = text; if(cls)node.className=cls; return node; };
+    output.append(el('p',label,'result-label'),el('div',amount,'result-value'));
+    const dl = document.createElement('dl'); dl.className='result-grid';
+    rows.forEach(([title,text]) => { const row=document.createElement('div'); row.append(el('dt',title),el('dd',text)); dl.append(row); });
+    output.append(dl,el('p',note,'result-note')); output.hidden=false; output.focus();
   }
-
-  const dailyAvg = monthlySalary / 30;
-  let dailyBenefit = dailyAvg * 0.6;
-  const MAX_DAILY = 66000;
-  const MIN_DAILY = Math.floor(9860 * 0.8 * dailyHours);
-
-  if (dailyBenefit > MAX_DAILY) dailyBenefit = MAX_DAILY;
-  if (dailyBenefit < MIN_DAILY) dailyBenefit = MIN_DAILY;
-
-  let days = 120;
-  if (!ageOver50) {
-    if (period === 1) days = 120;
-    else if (period === 2) days = 150;
-    else if (period === 3) days = 180;
-    else if (period === 4) days = 210;
-    else if (period === 5) days = 240;
-  } else {
-    if (period === 1) days = 120;
-    else if (period === 2) days = 180;
-    else if (period === 3) days = 210;
-    else if (period === 4) days = 240;
-    else if (period === 5) days = 270;
-  }
-
-  const totalBenefit = Math.round(dailyBenefit * days);
-  const monthlyBenefit = Math.round(dailyBenefit * 30);
-
-  document.getElementById("ue-result-box").classList.remove("hidden");
-  document.getElementById("ue-total-amount").textContent = totalBenefit.toLocaleString() + " 원";
-  document.getElementById("ue-daily-amount").textContent = Math.round(dailyBenefit).toLocaleString() + " 원";
-  document.getElementById("ue-days-count").textContent = days + " 일 (약 " + (days / 30).toFixed(1) + "개월)";
-  document.getElementById("ue-monthly-amount").textContent = monthlyBenefit.toLocaleString() + " 원";
-}
-
-// 2. 프리랜서 3.3% 환급액 계산기
-function calculateFreelancerTax() {
-  const annualIncome = parseFloat(document.getElementById("fl-income").value) || 0;
-  const expenseRate = parseFloat(document.getElementById("fl-rate").value) || 0.65;
-  const familyCount = parseInt(document.getElementById("fl-family").value, 10) || 1;
-
-  if (annualIncome <= 0) {
-    alert("연간 3.3% 총 수입을 입력해줘 형!");
-    return;
-  }
-
-  const prePaidTax = annualIncome * 0.033;
-  const prePaidIncomeTax = annualIncome * 0.03;
-  const expenseAmount = annualIncome * expenseRate;
-  const incomeAmount = Math.max(0, annualIncome - expenseAmount);
-  const personalDeduction = familyCount * 1500000 + 70000;
-  const taxableIncome = Math.max(0, incomeAmount - personalDeduction);
-
-  let calculatedTax = 0;
-  if (taxableIncome <= 14000000) {
-    calculatedTax = taxableIncome * 0.06;
-  } else if (taxableIncome <= 50000000) {
-    calculatedTax = 840000 + (taxableIncome - 14000000) * 0.15;
-  } else {
-    calculatedTax = 6240000 + (taxableIncome - 50000000) * 0.24;
-  }
-
-  calculatedTax = Math.max(0, calculatedTax - 70000);
-  let refundIncomeTax = prePaidIncomeTax - calculatedTax;
-  let finalRefund = refundIncomeTax > 0 ? refundIncomeTax * 1.1 : 0;
-
-  document.getElementById("fl-result-box").classList.remove("hidden");
-  document.getElementById("fl-refund-amount").textContent = Math.round(finalRefund).toLocaleString() + " 원";
-  document.getElementById("fl-prepaid-tax").textContent = Math.round(prePaidTax).toLocaleString() + " 원";
-  document.getElementById("fl-expense-deduct").textContent = Math.round(expenseAmount).toLocaleString() + " 원 (" + (expenseRate * 100) + "%)";
-  document.getElementById("fl-final-tax").textContent = Math.round(calculatedTax * 1.1).toLocaleString() + " 원";
-}
-
-// 3. 청년도약계좌 만기 비교기
-function calculateYouthLeap() {
-  const monthlyDeposit = parseFloat(document.getElementById("yl-deposit").value) || 700000;
-  const incomeTier = document.getElementById("yl-income").value;
-
-  let matchPerMonth = 24000;
-  if (incomeTier === "tier1") matchPerMonth = 33000;
-  else if (incomeTier === "tier2") matchPerMonth = 29000;
-  else if (incomeTier === "tier3") matchPerMonth = 25000;
-  else if (incomeTier === "tier4") matchPerMonth = 22000;
-  else matchPerMonth = 0;
-
-  const months = 60;
-  const totalPrincipal = monthlyDeposit * months;
-  const totalGovMatch = matchPerMonth * months;
-  const baseRate = 0.06;
-  const interest = monthlyDeposit * (months * (months + 1) / 2) * (baseRate / 12);
-  const leapTotal = totalPrincipal + totalGovMatch + interest;
-
-  const normalRate = 0.038;
-  const normalGrossInterest = monthlyDeposit * (months * (months + 1) / 2) * (normalRate / 12);
-  const normalNetInterest = normalGrossInterest * (1 - 0.154);
-  const normalTotal = totalPrincipal + normalNetInterest;
-  const extraProfit = leapTotal - normalTotal;
-
-  document.getElementById("yl-result-box").classList.remove("hidden");
-  document.getElementById("yl-total-amount").textContent = Math.round(leapTotal).toLocaleString() + " 원";
-  document.getElementById("yl-principal").textContent = totalPrincipal.toLocaleString() + " 원";
-  document.getElementById("yl-gov-match").textContent = totalGovMatch.toLocaleString() + " 원 (정부 전액 지원)";
-  document.getElementById("yl-interest").textContent = Math.round(interest).toLocaleString() + " 원 (비과세 100%)";
-  document.getElementById("yl-extra-gain").textContent = "+" + Math.round(extraProfit).toLocaleString() + " 원";
-}
-
-// 4. 건보료 본인부담상한제 환급기
-function calculateHealthRefund() {
-  const medicalExpense = parseFloat(document.getElementById("hi-expense").value) || 0;
-  const tier = parseInt(document.getElementById("hi-tier").value, 10) || 1;
-
-  if (medicalExpense <= 0) {
-    alert("지출한 병원비를 입력해줘 형!");
-    return;
-  }
-
-  const ceilingTiers = {
-    1: 870000, 2: 1080000, 3: 1080000, 4: 1620000, 5: 1620000,
-    6: 3030000, 7: 3030000, 8: 4140000, 9: 5380000, 10: 8000000
+  const actions = {
+    unemployment(form) {
+      const r=F.unemployment({dailyAverage:value('ue-average'),ordinaryDaily:value('ue-ordinary'),hours:value('ue-hours'),period:value('ue-period'),older:value('ue-age')==='over50'});
+      render(form,'받을 수 있는 총 구직급여 예상액',won(r.total),[['하루 지급액',won(r.daily)],['받을 수 있는 일수',r.days+' 일'],['28일 기준으로 계산하면',won(r.per28)],['입력한 근로시간의 하루 최소액',won(r.floor)]],'수급자격이 인정되고 해당 기간 동안 실업인정을 받는 경우예요. 실제 입금액은 회차별 인정일수에 따라 달라져요.');
+    },
+    freelancer(form) {
+      const r=F.freelancer({income:value('fl-income'),expenseRate:Number(value('fl-rate'))/100,people:value('fl-family'),otherDeduction:value('fl-deduction'),credit:value('fl-credit')});
+      render(form,r.balance>=0?'돌려받을 수 있는 예상 세금':'추가로 낼 수 있는 예상 세금',won(Math.abs(r.balance)),[['미리 낸 세금 (3.3%)',won(r.prepaid)],['반영한 필요경비',won(r.expense)],['과세표준',won(r.base)],['계산된 세금 (지방세 포함)',won(r.tax)]],'사업수입 전액에서 3.3%를 뗐고 다른 소득은 없다고 보고 계산했어요. 실제 신고할 때는 다른 소득과 공제도 함께 확인해 주세요.');
+    },
+    youth(form) {
+      const r=F.youth({deposit:value('yl-deposit'),tier:value('yl-income'),rate:Number(value('yl-rate'))/100,normalRate:Number(value('yl-normal'))/100,months:value('yl-months')});
+      render(form,'이 조건으로 모았을 때의 예상 금액',won(r.total),[['내가 납입한 원금',won(r.principal)],['정부기여금',won(r.contribution)],['납입원금에 붙는 이자',won(r.interest)],['일반적금과 비교한 차이',(r.extra>=0?'+':'−')+won(Math.abs(r.extra))]],'매달 납입액과 금리·기여금이 같다고 보고 계산했어요. 기여금에 붙는 은행이자는 제외했으니, 실제 계좌의 만기금액은 가입 은행에서 확인해 주세요.');
+    },
+    health(form) {
+      const r=F.health({expense:value('hi-expense'),ceiling:value('hi-ceiling'),paid:value('hi-paid')});
+      render(form,'아직 돌려받지 않은 예상 초과금',won(r.refund),[['상한제에 반영되는 본인부담금',won(r.expense)],['공단에서 확인한 상한액',won(r.ceiling)],['이미 받은 금액을 빼기 전 초과금',won(r.excess)]],'비급여 등 제외 항목을 빼고 입력했는지 확인해 주세요. 실제 환급액은 공단 심사와 다른 의료비 지원 여부에 따라 달라질 수 있어요.');
+    },
+    severance(form) {
+      const r=F.severance({start:value('sev-start'),end:value('sev-end'),wages:value('sev-wages'),bonus:value('sev-bonus'),leave:value('sev-leave'),ordinaryDaily:value('sev-ordinary'),taxYears:value('sev-taxyears')});
+      render(form,'세금을 뺀 예상 퇴직금',won(r.net),[['세전 퇴직금',won(r.gross)],['퇴직소득세',won(r.tax.national)],['지방소득세',won(r.tax.local)],['총 근무일수',r.days+' 일'],['평균임금을 계산한 기간',r.periodDays+' 일'],['계산에 적용한 하루 임금',won(r.daily)],['세금 계산에 적용한 근속연수',r.years+' 년'],['퇴직소득 과세표준',won(r.tax.base)]],'일시금으로 받고 세금을 정산하는 경우예요. IRP로 이체하거나 중간정산·근무 제외기간이 있다면 실제 금액이 달라질 수 있어요.');
+    },
+    pension(form) {
+      const r=F.pension({base:value('np-base'),normalAge:value('np-age'),shift:value('np-shift'),untilAge:value('np-until')});
+      render(form,'선택한 시점에 받기 시작하면, 매달',won(r.monthly),[['받기 시작하는 나이',r.startAge+' 세'],['정상 수령액과 비교하면',(r.factor*100).toFixed(1)+'%'],['선택한 시점으로 받으면 누적',won(r.total)],['정상 시점으로 받으면 누적',won(r.normalTotal)],['두 누적액의 차이',(r.difference>=0?'+':'−')+won(Math.abs(r.difference))]],'같은 종료 나이까지 받는 금액을 비교했어요. 물가·세금·추가 가입 등은 반영하지 않았으며, 조기 수령이 가능한지는 공단에서 확인해 주세요.');
+    },
+    yearend(form) {
+      const r=F.yearend({salary:value('ye-salary'),credit:value('ye-credit'),debit:value('ye-debit'),pensionSavings:value('ye-pension'),irp:value('ye-irp'),marginalRate:value('ye-rate')});
+      render(form,'카드·연금계좌로 줄어드는 예상 세금',won(r.effect),[['카드 공제가 시작되는 금액',won(r.threshold)],['카드 사용으로 받는 소득공제',won(r.cardDeduction)],['카드 공제로 줄어드는 예상 세금',won(r.cardEffect)],['연금계좌 공제 대상 납입액',won(r.eligiblePension)],['연금계좌 세액공제 (지방세 포함)',won(r.pensionCredit)]],'실제 돌려받는 환급액과는 달라요. 낼 세금이 적거나 다른 공제가 있으면 절세효과가 줄어들 수 있어요. 자녀 등 추가한도와 전통시장·대중교통 등 별도 사용분은 제외했어요.');
+    }
   };
-
-  const ceiling = ceilingTiers[tier] || 1620000;
-  const refund = Math.max(0, medicalExpense - ceiling);
-
-  document.getElementById("hi-result-box").classList.remove("hidden");
-  document.getElementById("hi-refund-amount").textContent = Math.round(refund).toLocaleString() + " 원";
-  document.getElementById("hi-my-ceiling").textContent = ceiling.toLocaleString() + " 원";
-  document.getElementById("hi-my-expense").textContent = medicalExpense.toLocaleString() + " 원";
-}
-
-// 5. [신규 추가] 퇴직금 & 퇴직소득세 모의계산기 (초고단가 금융 키워드)
-function calculateSeverance() {
-  const startYear = parseInt(document.getElementById("sev-start-year").value, 10) || 2020;
-  const endYear = parseInt(document.getElementById("sev-end-year").value, 10) || 2026;
-  const monthlySalary = parseFloat(document.getElementById("sev-salary").value) || 0;
-  const annualBonus = parseFloat(document.getElementById("sev-bonus").value) || 0;
-
-  if (monthlySalary <= 0) {
-    alert("퇴직 전 3개월 평균 월급을 입력해줘 형!");
-    return;
+  document.querySelectorAll('form[data-calculator]').forEach(form => {
+    const error=form.querySelector('.form-error'), output=form.querySelector('.calc-result');
+    form.addEventListener('submit',event => {
+      event.preventDefault(); error.hidden=true; output.hidden=true;
+      form.querySelectorAll('[aria-invalid]').forEach(input=>input.removeAttribute('aria-invalid'));
+      const invalid=[...form.querySelectorAll('input,select')].find(input=>!input.checkValidity());
+      if (invalid) { invalid.setAttribute('aria-invalid','true'); error.textContent=`${form.querySelector(`label[for="${invalid.id}"]`).textContent}: ${invalid.validationMessage}`; error.hidden=false; invalid.focus(); return; }
+      try { actions[form.dataset.calculator](form); } catch(err) { error.textContent=err.message; error.hidden=false; error.tabIndex=-1; error.focus(); }
+    });
+    const resetResults=()=>{output.hidden=true;error.hidden=true;form.querySelectorAll('[aria-invalid]').forEach(input=>input.removeAttribute('aria-invalid'));};
+    form.addEventListener('input',resetResults);
+    form.addEventListener('change',resetResults);
+  });
+  const panels=[...document.querySelectorAll('.calc-panel')], tabs=[...document.querySelectorAll('[data-tab]')];
+  function activate(key,update=false) {
+    if (key === 'youthleap') key='youth';
+    if (!panels.some(p=>p.id===key)) key='unemployment';
+    panels.forEach(panel=>{panel.hidden=panel.id!==key;});
+    tabs.forEach(tab=>{if(tab.dataset.tab===key)tab.setAttribute('aria-current','page');else tab.removeAttribute('aria-current');});
+    if (update) { const url=new URL(location.href); url.searchParams.set('tab',key);url.hash=key;history.pushState({},'',url); }
   }
-
-  const workYears = Math.max(1, endYear - startYear);
-  // 퇴직금 산정식: (1일 평균임금 * 30일) * 근속연수
-  // 1일 평균임금 = (3개월 급여 + 연간 상여금의 3/12) / 약 90일
-  const threeMonthSalary = monthlySalary * 3 + (annualBonus * 0.25);
-  const dailySalary = threeMonthSalary / 91.25;
-  const severancePay = Math.round(dailySalary * 30 * workYears);
-
-  // 2026 개편 퇴직소득공제 (근속연수공제 대폭 확대 반영)
-  let serviceDeduction = 0;
-  if (workYears <= 5) serviceDeduction = workYears * 1000000;
-  else if (workYears <= 10) serviceDeduction = 5000000 + (workYears - 5) * 2000000;
-  else if (workYears <= 20) serviceDeduction = 15000000 + (workYears - 10) * 2500000;
-  else serviceDeduction = 40000000 + (workYears - 20) * 3000000;
-
-  const afterDeduction = Math.max(0, severancePay - serviceDeduction);
-  // 환산급여
-  const convertedSalary = (afterDeduction / workYears) * 12;
-  // 환산급여공제 및 소득세율 적용 추정세액 (실효세율 보통 2~5% 수준)
-  let estTax = 0;
-  if (convertedSalary > 0) {
-    estTax = Math.round(convertedSalary * 0.035 * (workYears / 12) * 1.1);
-  }
-  const netSeverance = severancePay - estTax;
-
-  document.getElementById("sev-result-box").classList.remove("hidden");
-  document.getElementById("sev-total-amount").textContent = severancePay.toLocaleString() + " 원";
-  document.getElementById("sev-net-amount").textContent = netSeverance.toLocaleString() + " 원";
-  document.getElementById("sev-tax-amount").textContent = estTax.toLocaleString() + " 원 (지방세 포함)";
-  document.getElementById("sev-years-count").textContent = workYears + " 년";
-}
-
-// 6. [신규 추가] 국민연금 예상 수령액 및 조기 vs 연기연금 비교기
-function calculateNationalPension() {
-  const avgIncome = parseFloat(document.getElementById("np-income").value) || 3000000;
-  const payYears = parseInt(document.getElementById("np-years").value, 10) || 20;
-  const claimOption = document.getElementById("np-option").value;
-
-  // 국민연금 기본 공식 추정 (소득대체율 40% 기준)
-  // 20년 가입 기준 월 약 평균소득의 20~23% 수준
-  let baseMonthly = (avgIncome * 0.01 * payYears) * 1.08;
-
-  let multiplier = 1.0;
-  let optionText = "정상 수령 (만 65세)";
-  if (claimOption === "early5") {
-    multiplier = 0.70; // 5년 일찍 받으면 30% 감액
-    optionText = "5년 조기 수령 (만 60세, -30% 감액)";
-  } else if (claimOption === "early3") {
-    multiplier = 0.82; // 3년 일찍
-    optionText = "3년 조기 수령 (만 62세, -18% 감액)";
-  } else if (claimOption === "delay5") {
-    multiplier = 1.36; // 5년 늦게 받으면 +36% 증액
-    optionText = "5년 연기 수령 (만 70세, +36% 증액)";
-  }
-
-  const finalMonthly = Math.round(baseMonthly * multiplier);
-  const annualTotal = finalMonthly * 12;
-  const lifetimeEst = finalMonthly * 12 * 25; // 25년간 수령 기준
-
-  document.getElementById("np-result-box").classList.remove("hidden");
-  document.getElementById("np-monthly-amount").textContent = finalMonthly.toLocaleString() + " 원 / 월";
-  document.getElementById("np-annual-amount").textContent = annualTotal.toLocaleString() + " 원";
-  document.getElementById("np-lifetime-amount").textContent = "약 " + (lifetimeEst / 100000000).toFixed(1) + "억 원";
-  document.getElementById("np-applied-option").textContent = optionText;
-}
-
-// 7. [신규 추가] 연말정산 신용카드 vs 체크카드 vs 연금저축 절세 계산기
-function calculateYearEndTax() {
-  const salary = parseFloat(document.getElementById("ye-salary").value) || 45000000;
-  const creditSpend = parseFloat(document.getElementById("ye-credit").value) || 0;
-  const debitSpend = parseFloat(document.getElementById("ye-debit").value) || 0;
-  const pensionSavings = parseFloat(document.getElementById("ye-pension").value) || 0;
-
-  // 카드 소득공제 문턱: 총급여의 25%
-  const threshold = salary * 0.25;
-  const totalSpend = creditSpend + debitSpend;
-
-  let cardDeduction = 0;
-  if (totalSpend > threshold) {
-    const excess = totalSpend - threshold;
-    // 신용카드(15%) 먼저 채우고 체크카드(30%) 공제
-    const debitRatio = debitSpend / totalSpend;
-    const effRate = (1 - debitRatio) * 0.15 + debitRatio * 0.30;
-    cardDeduction = Math.min(3000000, excess * effRate);
-  }
-
-  // 연금저축/IRP 세액공제 (최대 900만원, 총급여 5500만원 이하는 16.5%, 초과는 13.2%)
-  const taxCreditRate = salary <= 55000000 ? 0.165 : 0.132;
-  const pensionTaxCredit = Math.min(9000000, pensionSavings) * taxCreditRate;
-
-  // 카드 소득공제로 아끼는 세금 (한계세율 약 16.5% 적용)
-  const cardTaxSaved = cardDeduction * 0.165;
-  const totalSaved = cardTaxSaved + pensionTaxCredit;
-
-  document.getElementById("ye-result-box").classList.remove("hidden");
-  document.getElementById("ye-total-saved").textContent = Math.round(totalSaved).toLocaleString() + " 원 환급";
-  document.getElementById("ye-pension-saved").textContent = Math.round(pensionTaxCredit).toLocaleString() + " 원";
-  document.getElementById("ye-card-saved").textContent = Math.round(cardTaxSaved).toLocaleString() + " 원";
-  document.getElementById("ye-card-deduct").textContent = Math.round(cardDeduction).toLocaleString() + " 원";
-}
+  const current=()=>new URLSearchParams(location.search).get('tab') || location.hash.slice(1) || 'unemployment';
+  activate(current());
+  tabs.forEach(tab=>tab.addEventListener('click',event=>{event.preventDefault();activate(tab.dataset.tab,true);}));
+  window.addEventListener('popstate',()=>activate(current()));
+})();
